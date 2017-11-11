@@ -1,5 +1,7 @@
 import React from 'react';
 import {
+  Circle,
+  Group,
   Stage,
   Rect,
   Layer,
@@ -40,7 +42,6 @@ class Shape extends React.Component {
     this.onClick = (e) => {
       e.cancelBubble = true;
       this.setState({isSelected: true});
-      console.log(this.props)
       this.props.onClick(e, this.props.id);
     }
 
@@ -60,19 +61,61 @@ class Shape extends React.Component {
   }
 
   render() {
+    const width     = 50;
+    const height    = 50;
+    const baseColor = this.props.isSelected ? "0, 0, 255" : "0, 0, 0";
+    const dotAlpha  = this.props.isSelected ? 1 : 0;
+    const color     = `rgb(${baseColor})`;
+    const dotColor  = `rgba(${baseColor}, ${dotAlpha})`;
+
     return (
-       <Rect
-          x={this.state.x}
-          y={this.state.y}
-          width={50}
-          height={50}
-          stroke={this.props.isSelected ? '#0000ff' : '#000000'}
+      <Group
+        x={this.state.x}
+        y={this.state.y}
+        width={width}
+        height={height}
+        draggable={true}
+        onClick={this.onClick}
+        onMouseDown={this.onMouseDown}
+        onDragEnd={this.onDragEnd}
+      >
+        <Rect
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          stroke={color}
           strokeWidth={2}
-          onClick={this.onClick}
-          draggable={true}
-          onMouseDown={this.onMouseDown}
-          onDragEnd={this.onDragEnd}
         />
+
+        <Circle
+          x={0}
+          y={0}
+          radius={5}
+          fill={dotColor}
+        />
+
+        <Circle
+          x={width}
+          y={0}
+          radius={5}
+          fill={dotColor}
+        />
+
+        <Circle
+          x={width}
+          y={height}
+          radius={5}
+          fill={dotColor}
+        />
+
+        <Circle
+          x={0}
+          y={height}
+          radius={5}
+          fill={dotColor}
+        />
+      </Group>
     );
   }
 }
@@ -102,8 +145,8 @@ class Editor extends React.Component {
 
     this.updateDims = (e) => {
       this.setState({
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width  : window.innerWidth,
+        height : window.innerHeight,
       })
     };
 
@@ -122,7 +165,7 @@ class Editor extends React.Component {
         {this.state.shapes.map(shape => (
           <Shape
             id={shape.id}
-            isSelected={shape.id == this.state.selectedShapeId}
+            isSelected={shape.id === this.state.selectedShapeId}
             key={shape.id}
             onClick={this.onShapeClick}
           />
