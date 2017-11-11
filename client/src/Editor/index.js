@@ -40,7 +40,8 @@ class Shape extends React.Component {
     this.onClick = (e) => {
       e.cancelBubble = true;
       this.setState({isSelected: true});
-      this.props.onClick(e);
+      console.log(this.props)
+      this.props.onClick(e, this.props.id);
     }
 
     this.onDragEnd = (e) => {
@@ -83,16 +84,20 @@ class Editor extends React.Component {
     super();
     this.state = {
       height: 0,
-      isSelected: false,
       width: 0,
+      selectedShapeId: null,
+      shapes: [
+        { id: 0, },
+        { id: 1, }
+      ]
     };
 
-    this.onShapeClick = (e) => {
-      this.setState({ isSelected: true });
+    this.onShapeClick = (e, id) => {
+      this.setState({selectedShapeId: id});
     };
 
     this.onStageClick = (e) => {
-      this.setState({ isSelected: false })
+      this.setState({selectedShapeId: null});
     };
 
     this.updateDims = (e) => {
@@ -109,16 +114,19 @@ class Editor extends React.Component {
     this.updateDims();
   }
 
-
   render() {
     const {width, height} = this.state;
 
     return (
       <DownpourStage width={width} height={height} onClick={this.onStageClick}>
-        <Shape
-          onClick={this.onShapeClick}
-          isSelected={this.state.isSelected}
-        />
+        {this.state.shapes.map(shape => (
+          <Shape
+            id={shape.id}
+            isSelected={shape.id == this.state.selectedShapeId}
+            key={shape.id}
+            onClick={this.onShapeClick}
+          />
+        ))}
       </DownpourStage>
     )
   }
