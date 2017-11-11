@@ -3,6 +3,9 @@ import Connection    from './Connection';
 import DownpourStage from './DownpourStage';
 import Shape         from './Shape';
 
+
+const len = (p1, p2) => Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2))
+
 class Editor extends React.Component {
   constructor() {
     super();
@@ -11,8 +14,9 @@ class Editor extends React.Component {
       height: 0,
       selectedShapeId: null,
       shapes: [
-        { id: 0, x: 10, y: 10 },
-        { id: 1, x: 300, y: 10 }
+        { id: 0, x: 10, y: 10, w: 50, h: 50 },
+        { id: 1, x: 300, y: 10, w: 75, h: 50 },
+        { id: 2, x: 500, y: 100, w: 100, h: 50 }
       ],
       width: 0,
     };
@@ -61,6 +65,8 @@ class Editor extends React.Component {
             id={shape.id}
             x={shape.x}
             y={shape.y}
+            w={shape.w}
+            h={shape.h}
             isSelected={shape.id === this.state.selectedShapeId}
             key={shape.id}
             onClick={this.onShapeClick}

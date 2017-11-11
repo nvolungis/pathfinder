@@ -61,14 +61,12 @@ class Shape extends React.Component {
   }
 
   render() {
-    const width     = 50;
-    const height    = 50;
+    const width     = this.props.w;
+    const height    = this.props.h;
     const baseColor = this.props.isSelected ? "0, 0, 255" : "0, 0, 0";
     const dotAlpha  = this.props.isSelected ? 1 : 0;
     const color     = `rgb(${baseColor})`;
     const dotColor  = `rgba(${baseColor}, ${dotAlpha})`;
-
-    console.log('x', this.props.x);
 
     return (
       <Group
