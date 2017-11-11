@@ -5,6 +5,7 @@ import {
   Stage,
   Rect,
   Layer,
+  Line,
 } from 'react-konva';
 
 
@@ -26,17 +27,25 @@ class DownpourStage extends React.Component {
   }
 }
 
+class Connection extends React.Component {
+  render() {
+    const {from, to} = this.props;
+    return <Line
+      stroke="#000000"
+      strokeWidth={2}
+      points={[from.x, from.y, to.x, to.y]}
+    />;
+  }
+}
 
 class Shape extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       isSelected: false,
       startX: 0,
       startY: 0,
-      x: 10,
-      y: 10,
     };
 
     this.onClick = (e) => {
@@ -46,9 +55,9 @@ class Shape extends React.Component {
     }
 
     this.onDragEnd = (e) => {
-      this.setState({
-        x: this.state.x + (e.evt.layerX - this.state.startX),
-        y: this.state.y + (e.evt.layerY - this.state.startY),
+      this.props.updateShape(this.props.id, {
+        x: this.props.x + (e.evt.layerX - this.state.startX),
+        y: this.props.y + (e.evt.layerY - this.state.startY),
       });
     };
 
@@ -70,8 +79,8 @@ class Shape extends React.Component {
 
     return (
       <Group
-        x={this.state.x}
-        y={this.state.y}
+        x={this.props.x}
+        y={this.props.y}
         width={width}
         height={height}
         draggable={true}
@@ -121,18 +130,18 @@ class Shape extends React.Component {
 }
 
 
-
 class Editor extends React.Component {
   constructor() {
     super();
     this.state = {
+      connections: [[0, 1]],
       height: 0,
       width: 0,
       selectedShapeId: null,
       shapes: [
-        { id: 0, },
-        { id: 1, }
-      ]
+        { id: 0, x: 10, y: 10 },
+        { id: 1, x: 300, y: 10 }
+      ],
     };
 
     this.onShapeClick = (e, id) => {
@@ -141,6 +150,21 @@ class Editor extends React.Component {
 
     this.onStageClick = (e) => {
       this.setState({selectedShapeId: null});
+    };
+
+    this.updateShape = (id, position) => {
+      const shapes = this.state.shapes.map(shape => {
+        if (shape.id === id) {
+          return {
+            ...shape,
+            ...position,
+          }
+        }
+
+        return shape;
+      })
+
+      this.setState({shapes});
     };
 
     this.updateDims = (e) => {
@@ -158,18 +182,26 @@ class Editor extends React.Component {
   }
 
   render() {
-    const {width, height} = this.state;
+    const {connections, shapes, width, height} = this.state;
 
     return (
       <DownpourStage width={width} height={height} onClick={this.onStageClick}>
         {this.state.shapes.map(shape => (
           <Shape
             id={shape.id}
+            x={shape.x}
+            y={shape.y}
             isSelected={shape.id === this.state.selectedShapeId}
             key={shape.id}
             onClick={this.onShapeClick}
+            updateShape={this.updateShape}
           />
         ))}
+
+          {connections.map(conn => (
+            <Connection from={shapes[conn[0]]} to={shapes[conn[1]]} />
+          ))}
+
       </DownpourStage>
     )
   }
