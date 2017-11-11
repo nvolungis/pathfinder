@@ -42,31 +42,61 @@ class Shape extends React.Component {
   constructor(props) {
     super(props);
 
+    const onDrag = e => {
+
+      const position = {
+        x: this.state.x + (e.layerX - this.state.startX),
+        y: this.state.y + (e.layerY - this.state.startY),
+      };
+
+      this.props.updateShape(this.props.id, position);
+
+      return position;
+
+    };
+
     this.state = {
+      isMouseDown: false,
       isSelected: false,
       startX: 0,
       startY: 0,
+      x: this.props.x,
+      y: this.props.y,
     };
 
     this.onClick = (e) => {
       e.cancelBubble = true;
       this.setState({isSelected: true});
       this.props.onClick(e, this.props.id);
-    }
-
-    this.onDragEnd = (e) => {
-      this.props.updateShape(this.props.id, {
-        x: this.props.x + (e.evt.layerX - this.state.startX),
-        y: this.props.y + (e.evt.layerY - this.state.startY),
-      });
     };
 
     this.onMouseDown = (e) => {
       this.setState({
+        isMouseDown: true,
         startX: e.evt.layerX,
         startY: e.evt.layerY,
       });
-    }
+
+      document.addEventListener('mouseup', this.onMouseUp);
+      document.addEventListener('mousemove', this.onMouseMove);
+    };
+
+    this.onMouseMove = (e) => {
+      if (!this.state.isMouseDown) return;
+
+      onDrag(e);
+    };
+
+    this.onMouseUp = (e) => {
+      if (!this.state.isMouseDown) return;
+
+      this.setState({
+        isMouseDown: false,
+      });
+
+      const position = onDrag(e);
+      this.setState({...position});
+    };
   }
 
   render() {
@@ -77,16 +107,16 @@ class Shape extends React.Component {
     const color     = `rgb(${baseColor})`;
     const dotColor  = `rgba(${baseColor}, ${dotAlpha})`;
 
+    console.log('x', this.props.x);
+
     return (
       <Group
         x={this.props.x}
         y={this.props.y}
         width={width}
         height={height}
-        draggable={true}
         onClick={this.onClick}
         onMouseDown={this.onMouseDown}
-        onDragEnd={this.onDragEnd}
       >
         <Rect
           x={0}
