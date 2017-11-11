@@ -9,12 +9,12 @@ class Editor extends React.Component {
     this.state = {
       connections: [[0, 1]],
       height: 0,
-      width: 0,
       selectedShapeId: null,
       shapes: [
         { id: 0, x: 10, y: 10 },
         { id: 1, x: 300, y: 10 }
       ],
+      width: 0,
     };
 
     this.onShapeClick = (e, id) => {
@@ -28,10 +28,7 @@ class Editor extends React.Component {
     this.updateShape = (id, position) => {
       const shapes = this.state.shapes.map(shape => {
         if (shape.id === id) {
-          return {
-            ...shape,
-            ...position,
-          }
+          return { ...shape, ...position }
         }
 
         return shape;
@@ -71,9 +68,13 @@ class Editor extends React.Component {
           />
         ))}
 
-          {connections.map(conn => (
-            <Connection from={shapes[conn[0]]} to={shapes[conn[1]]} />
-          ))}
+        {connections.map((conn, index) => (
+          <Connection
+            key={index}
+            from={shapes[conn[0]]}
+            to={shapes[conn[1]]}
+          />
+        ))}
 
       </DownpourStage>
     )
