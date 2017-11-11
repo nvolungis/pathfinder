@@ -1,20 +1,102 @@
-import React         from 'react';
-import {Group, Rect} from 'react-konva';
+import React                from 'react';
+import {Group, Rect, Image} from 'react-konva';
+import move                 from './move.png';
+
+class ShapeMoverImage extends React.Component {
+  constructor() {
+    super();
+
+    this.state = { image: null };
+  }
+
+  componentDidMount() {
+    const image = new window.Image();
+    image.src = move;
+    image.onload = () => {
+      this.setState({ image: image });
+    }
+  }
+
+  render() {
+    if (!this.state.image) return null;
+
+    return (
+      <Image
+        image={this.state.image}
+        width={this.props.width}
+        height={this.props.height}
+      />
+    )
+  }
+}
+
+
+class ShapeMover extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      isMouseDown : false,
+      startX      : 0,
+      startY      : 0,
+    };
+
+    this.onMouseDown = (e) => {
+      this.setState({
+        isMouseDown : true,
+        startX      : e.evt.layerX,
+        startY      : e.evt.layerY,
+      });
+
+      document.addEventListener('mouseup', this.onMouseUp);
+      document.addEventListener('mousemove', this.onMouseMove);
+    };
+
+    this.onMouseMove = (e) => {
+      if (!this.state.isMouseDown) return;
+
+      const position = {
+        x: (e.layerX - this.state.startX),
+        y: (e.layerY - this.state.startY),
+      };
+
+      this.props.onMove(position);
+    };
+
+    this.onMouseUp = (e) => {
+      if (!this.state.isMouseDown) return;
+
+      this.setState({
+        isMouseDown: false,
+      });
+
+      this.props.onMoveEnd();
+    };
+  }
+
+  render() {
+    const width = 20;
+    const height= 20;
+
+    return (
+      <Group
+        x={5}
+        y={5}
+        width={width}
+        height={height}
+        onMouseDown={this.onMouseDown}
+      >
+        {this.props.isVisible && <ShapeMoverImage width={width} height={height} />}
+
+      </Group>
+    );
+  }
+}
+
 
 class Shape extends React.Component {
   constructor(props) {
     super(props);
-
-    const onDrag = e => {
-      const position = {
-        x: this.state.x + (e.layerX - this.state.startX),
-        y: this.state.y + (e.layerY - this.state.startY),
-      };
-
-      this.props.updateShape(this.props.id, position);
-
-      return position;
-    };
 
     this.state = {
       isMouseDown : false,
@@ -27,38 +109,26 @@ class Shape extends React.Component {
       y           : this.props.y,
     };
 
+    this.onMove = delta => {
+      const position = {
+        x: this.state.x + delta.x,
+        y: this.state.y + delta.y,
+      };
+
+      this.props.updateShape(this.props.id, position);
+    };
+
+    this.onMoveEnd = () => {
+      this.setState({
+        x: this.props.x,
+        y: this.props.y,
+      });
+    };
+
     this.onClick = (e) => {
       e.cancelBubble = true;
       this.setState({isSelected: true});
       this.props.onClick(e, this.props.id);
-    };
-
-    this.onMouseDown = (e) => {
-      this.setState({
-        isMouseDown: true,
-        startX: e.evt.layerX,
-        startY: e.evt.layerY,
-      });
-
-      document.addEventListener('mouseup', this.onMouseUp);
-      document.addEventListener('mousemove', this.onMouseMove);
-    };
-
-    this.onMouseMove = (e) => {
-      if (!this.state.isMouseDown) return;
-
-      onDrag(e);
-    };
-
-    this.onMouseUp = (e) => {
-      if (!this.state.isMouseDown) return;
-
-      this.setState({
-        isMouseDown: false,
-      });
-
-      const position = onDrag(e);
-      this.setState({...position});
     };
 
     this.onMouseOver = e => {
@@ -94,7 +164,6 @@ class Shape extends React.Component {
         width={width}
         height={height}
         onClick={this.onClick}
-        onMouseDown={this.onMouseDown}
         onMouseOver={this.onMouseOver}
         onMouseLeave={this.onMouseLeave}
       >
@@ -105,6 +174,12 @@ class Shape extends React.Component {
           height={height}
           stroke={this.color}
           strokeWidth={2}
+        />
+
+        <ShapeMover
+          isVisible={this.state.isHovering}
+          onMove={this.onMove}
+          onMoveEnd={this.onMoveEnd}
         />
       </Group>
     );
