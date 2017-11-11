@@ -81,7 +81,11 @@ class Shape extends React.Component {
 class Editor extends React.Component {
   constructor() {
     super();
-    this.state = {isSelected: false};
+    this.state = {
+      height: 0,
+      isSelected: false,
+      width: 0,
+    };
 
     this.onShapeClick = (e) => {
       this.setState({ isSelected: true });
@@ -90,15 +94,27 @@ class Editor extends React.Component {
     this.onStageClick = (e) => {
       this.setState({ isSelected: false })
     };
+
+    this.updateDims = (e) => {
+      this.setState({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      })
+    };
+
+    window.addEventListener('resize', this.updateDims);
+  }
+
+  componentDidMount() {
+    this.updateDims();
   }
 
 
   render() {
-    const {width, height} = this.props;
-    const dims = {width, height};
+    const {width, height} = this.state;
 
     return (
-      <DownpourStage {...dims} onClick={this.onStageClick}>
+      <DownpourStage width={width} height={height} onClick={this.onStageClick}>
         <Shape
           onClick={this.onShapeClick}
           isSelected={this.state.isSelected}

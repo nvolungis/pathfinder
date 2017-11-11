@@ -5,7 +5,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <Editor width={700} height={700} />
+        <Editor />
       </div>
     );
   }
