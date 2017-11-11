@@ -108,26 +108,17 @@ class Editor extends React.Component {
         ))}
 
         {potentialConnection && (
-          <PotentialConnection
+          <Connection
             from={shapes[potentialConnection.id]}
-            to={potentialConnection.mousePos}
+            to={{
+              ...potentialConnection.mousePos,
+              w: 0, h: 0,
+            }}
           />
         )}
 
       </DownpourStage>
     )
-  }
-}
-
-class PotentialConnection extends React.Component {
-  render() {
-    const {from, to} = this.props;
-
-    return <Line
-      stroke="#000000"
-      strokeWidth={2}
-      points={[from.x, from.y, to.x, to.y]}
-    />;
   }
 }
 
