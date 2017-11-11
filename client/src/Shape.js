@@ -18,12 +18,14 @@ class Shape extends React.Component {
     };
 
     this.state = {
-      isMouseDown: false,
-      isSelected: false,
-      startX: 0,
-      startY: 0,
-      x: this.props.x,
-      y: this.props.y,
+      isMouseDown : false,
+      isSelected  : false,
+      rgb         : [0, 0, 0],
+      rgbHover    : [0, 0, 255],
+      startX      : 0,
+      startY      : 0,
+      x           : this.props.x,
+      y           : this.props.y,
     };
 
     this.onClick = (e) => {
@@ -59,6 +61,27 @@ class Shape extends React.Component {
       const position = onDrag(e);
       this.setState({...position});
     };
+
+    this.onMouseOver = e => {
+      this.setState({isHovering: true});
+    };
+
+    this.onMouseLeave = e => {
+      this.setState({isHovering: false});
+    };
+  }
+
+  get color() {
+    const {isHovering, rgb, rgbHover} = this.state;
+    const color = isHovering ? rgbHover : rgb;
+    return `rgb(${color.join(', ')})`;
+  }
+
+  get anchorColor() {
+    const {isHovering, rgb, rgbHover} = this.state;
+    const alpha = isHovering ? 1 : 0;
+    const color = isHovering ? rgbHover : rgb;
+    return `rgba(${color.join(', ')}, ${alpha})`;
   }
 
   renderAnchors(color) {
@@ -69,18 +92,14 @@ class Shape extends React.Component {
         x={point.x}
         y={point.y}
         radius={5}
-        fill={color}
+        fill={this.anchorColor}
       />
     ));
   }
 
   render() {
-    const width     = this.props.w;
-    const height    = this.props.h;
-    const baseColor = this.props.isSelected ? "0, 0, 255" : "0, 0, 0";
-    const dotAlpha  = this.props.isSelected ? 1 : 0;
-    const color     = `rgb(${baseColor})`;
-    const dotColor  = `rgba(${baseColor}, ${dotAlpha})`;
+    const width  = this.props.w;
+    const height = this.props.h;
 
     return (
       <Group
@@ -90,17 +109,19 @@ class Shape extends React.Component {
         height={height}
         onClick={this.onClick}
         onMouseDown={this.onMouseDown}
+        onMouseOver={this.onMouseOver}
+        onMouseLeave={this.onMouseLeave}
       >
         <Rect
           x={0}
           y={0}
           width={width}
           height={height}
-          stroke={color}
+          stroke={this.color}
           strokeWidth={2}
         />
 
-        {this.renderAnchors(dotColor)}
+        {this.renderAnchors()}
       </Group>
     );
   }
