@@ -2,13 +2,37 @@ import React         from 'react';
 import Connection    from './Connection';
 import DownpourStage from './DownpourStage';
 import Shape         from './Shape';
-import {Line}        from 'react-konva';
+
+import {
+  getAnchorPoints,
+  getMinIndex,
+  len
+} from './lib/point-math';
+
+const closest = (shapes, mousePos) => {
+  const shapeLens = shapes.map(shape => {
+    const pointLens = getAnchorPoints(shape, "absolute").map(point => len(point, mousePos));
+    const minIndex  = getMinIndex(pointLens);
+
+    return {id: shape.id, len: pointLens[minIndex]}
+  });
+
+  let min = shapeLens[0];
+
+  shapeLens.forEach(entry => {
+    if (entry.len < min.len) {
+      min = entry;
+    }
+  });
+
+  return min;
+};
 
 class Editor extends React.Component {
   constructor() {
     super();
     this.state = {
-      connections: [[0, 1], [1, 2], [2, 3], [3, 0]],
+      connections: [[0, 1]],
       height: 0,
       selectedShapeId: null,
       shapes: [
@@ -49,23 +73,40 @@ class Editor extends React.Component {
 
     this.createPotentialConnection = (id, mousePos) => {
       this.setState({
-        potentialConnection: {id, mousePos}
+        potentialConnection: {fromId: id, mousePos}
       });
     };
 
     this.updatePotentialConnection = mousePos => {
-      console.log('move', mousePos);
+      const {shapes, potentialConnection} = this.state;
+      const closestShape = closest(shapes, mousePos);
+      const isntSelf = closestShape.id !== potentialConnection.fromId;
+      const isWithinThreshold = closestShape.len <= 20;
+      const toId = isntSelf && isWithinThreshold ? closestShape.id : undefined;
+
       this.setState({
         potentialConnection: {
-          ...this.state.potentialConnection,
+          ...potentialConnection,
           mousePos,
+          toId,
         }
       });
     };
 
     this.completePotentialConnection = () => {
+      const {connections, potentialConnection} = this.state;
+
+      if (potentialConnection.toId !== undefined) {
+        this.setState({
+          connections: connections.concat([[
+            potentialConnection.fromId,
+            potentialConnection.toId,
+          ]])
+        })
+      }
+
       this.setState({ potentialConnection: null });
-    }
+    };
   }
 
   componentDidMount() {
@@ -75,6 +116,25 @@ class Editor extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateDims);
+  }
+
+  get potentialConnectionData() {
+    const {potentialConnection, shapes} = this.state;
+
+    if (potentialConnection.toId !== undefined) {
+      return {
+        from : shapes[potentialConnection.fromId],
+        to   : shapes[potentialConnection.toId],
+      }
+    }
+
+    return {
+      from: shapes[potentialConnection.fromId],
+      to: {
+        ...potentialConnection.mousePos,
+        w: 0, h: 0,
+      }
+    }
   }
 
   render() {
@@ -109,14 +169,10 @@ class Editor extends React.Component {
 
         {potentialConnection && (
           <Connection
-            from={shapes[potentialConnection.id]}
-            to={{
-              ...potentialConnection.mousePos,
-              w: 0, h: 0,
-            }}
+            from={this.potentialConnectionData.from}
+            to={this.potentialConnectionData.to}
           />
         )}
-
       </DownpourStage>
     )
   }

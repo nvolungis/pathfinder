@@ -1,20 +1,11 @@
-import React             from 'react';
-import {Line}            from 'react-konva';
-import {getAnchorPoints} from './util';
+import React  from 'react';
+import {Line} from 'react-konva';
 
-const len = (p1, p2) => Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2))
-
-const getMinIndex = list => {
-  let min = {index: 0, len: list[0]};
-
-  list.forEach((item, index) => {
-    if (item < min.len) {
-      min = {len: item, index};
-    }
-  });
-
-  return min.index;
-};
+import {
+  getAnchorPoints,
+  getMinIndex,
+  len
+} from './lib/point-math';
 
 const optimizePoint1 = (p1, p2) => {
   const points = getAnchorPoints(p1, "absolute");
