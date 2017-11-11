@@ -2,6 +2,7 @@ import React         from 'react';
 import Connection    from './Connection';
 import DownpourStage from './DownpourStage';
 import Shape         from './Shape';
+import {Line}        from 'react-konva';
 
 class Editor extends React.Component {
   constructor() {
@@ -46,15 +47,38 @@ class Editor extends React.Component {
       })
     };
 
-    window.addEventListener('resize', this.updateDims);
+    this.createPotentialConnection = (id, mousePos) => {
+      this.setState({
+        potentialConnection: {id, mousePos}
+      });
+    };
+
+    this.updatePotentialConnection = mousePos => {
+      console.log('move', mousePos);
+      this.setState({
+        potentialConnection: {
+          ...this.state.potentialConnection,
+          mousePos,
+        }
+      });
+    };
+
+    this.completePotentialConnection = () => {
+      this.setState({ potentialConnection: null });
+    }
   }
 
   componentDidMount() {
+    window.addEventListener('resize', this.updateDims);
     this.updateDims();
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDims);
+  }
+
   render() {
-    const {connections, shapes, width, height} = this.state;
+    const {connections, shapes, width, height, potentialConnection} = this.state;
 
     return (
       <DownpourStage width={width} height={height} onClick={this.onStageClick}>
@@ -69,6 +93,9 @@ class Editor extends React.Component {
             key={shape.id}
             onClick={this.onShapeClick}
             updateShape={this.updateShape}
+            createPotentialConnection={this.createPotentialConnection}
+            updatePotentialConnection={this.updatePotentialConnection}
+            completePotentialConnection={this.completePotentialConnection}
           />
         ))}
 
@@ -80,8 +107,27 @@ class Editor extends React.Component {
           />
         ))}
 
+        {potentialConnection && (
+          <PotentialConnection
+            from={shapes[potentialConnection.id]}
+            to={potentialConnection.mousePos}
+          />
+        )}
+
       </DownpourStage>
     )
+  }
+}
+
+class PotentialConnection extends React.Component {
+  render() {
+    const {from, to} = this.props;
+
+    return <Line
+      stroke="#000000"
+      strokeWidth={2}
+      points={[from.x, from.y, to.x, to.y]}
+    />;
   }
 }
 

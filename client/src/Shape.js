@@ -1,98 +1,6 @@
-import React                from 'react';
-import {Group, Rect, Image} from 'react-konva';
-import move                 from './move.png';
-
-class ShapeMoverImage extends React.Component {
-  constructor() {
-    super();
-
-    this.state = { image: null };
-  }
-
-  componentDidMount() {
-    const image = new window.Image();
-    image.src = move;
-    image.onload = () => {
-      this.setState({ image: image });
-    }
-  }
-
-  render() {
-    if (!this.state.image) return null;
-
-    return (
-      <Image
-        image={this.state.image}
-        width={this.props.width}
-        height={this.props.height}
-      />
-    )
-  }
-}
-
-
-class ShapeMover extends React.Component {
-  constructor() {
-    super();
-
-    this.state = {
-      isMouseDown : false,
-      startX      : 0,
-      startY      : 0,
-    };
-
-    this.onMouseDown = (e) => {
-      this.setState({
-        isMouseDown : true,
-        startX      : e.evt.layerX,
-        startY      : e.evt.layerY,
-      });
-
-      document.addEventListener('mouseup', this.onMouseUp);
-      document.addEventListener('mousemove', this.onMouseMove);
-    };
-
-    this.onMouseMove = (e) => {
-      if (!this.state.isMouseDown) return;
-
-      const position = {
-        x: (e.layerX - this.state.startX),
-        y: (e.layerY - this.state.startY),
-      };
-
-      this.props.onMove(position);
-    };
-
-    this.onMouseUp = (e) => {
-      if (!this.state.isMouseDown) return;
-
-      this.setState({
-        isMouseDown: false,
-      });
-
-      this.props.onMoveEnd();
-    };
-  }
-
-  render() {
-    const width = 20;
-    const height= 20;
-
-    return (
-      <Group
-        x={5}
-        y={5}
-        width={width}
-        height={height}
-        onMouseDown={this.onMouseDown}
-      >
-        {this.props.isVisible && <ShapeMoverImage width={width} height={height} />}
-
-      </Group>
-    );
-  }
-}
-
+import React         from 'react';
+import {Group, Rect} from 'react-konva';
+import ShapeMover    from './ShapeMover';
 
 class Shape extends React.Component {
   constructor(props) {
@@ -146,13 +54,6 @@ class Shape extends React.Component {
     return `rgb(${color.join(', ')})`;
   }
 
-  get anchorColor() {
-    const {isHovering, rgb, rgbHover} = this.state;
-    const alpha = isHovering ? 1 : 0;
-    const color = isHovering ? rgbHover : rgb;
-    return `rgba(${color.join(', ')}, ${alpha})`;
-  }
-
   render() {
     const width  = this.props.w;
     const height = this.props.h;
@@ -181,8 +82,60 @@ class Shape extends React.Component {
           onMove={this.onMove}
           onMoveEnd={this.onMoveEnd}
         />
+
+        <ShapeConnector
+          width={width}
+          isVisible={this.state.isHovering}
+          createPotentialConnection={mousePos => {
+            this.props.createPotentialConnection(this.props.id, mousePos)
+          }}
+          updatePotentialConnection={this.props.updatePotentialConnection}
+          completePotentialConnection={this.props.completePotentialConnection}
+        />
       </Group>
     );
+  }
+}
+
+class ShapeConnector extends React.Component {
+  constructor() {
+    super();
+
+    this.onMouseDown = e => {
+      const {layerX, layerY} = e.evt;
+      this.props.createPotentialConnection({x: layerX, y: layerY});
+      document.addEventListener('mouseup', this.onMouseUp);
+      document.addEventListener('mousemove', this.onMouseMove);
+    };
+
+    this.onMouseMove = e => {
+      const {layerX, layerY} = e;
+
+      this.props.updatePotentialConnection({x: layerX, y: layerY});
+    };
+
+    this.onMouseUp = e => {
+      this.props.completePotentialConnection();
+      document.removeEventListener('mouseup', this.onMouseUp);
+      document.removeEventListener('mousemove', this.onMouseMove);
+    };
+  }
+
+  render() {
+    const width  = 20;
+    const height = 20;
+
+    return (
+      <Rect
+        x={this.props.width - width}
+        y={0}
+        width={width}
+        height={height}
+        stroke="#000"
+        strokeWidth={2}
+        onMouseDown={this.onMouseDown}
+      />
+    )
   }
 }
 
