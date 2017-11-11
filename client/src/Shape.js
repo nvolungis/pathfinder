@@ -1,5 +1,6 @@
-import React from 'react';
+import React                 from 'react';
 import {Circle, Group, Rect} from 'react-konva';
+import {getAnchorPoints}     from './util';
 
 class Shape extends React.Component {
   constructor(props) {
@@ -60,6 +61,19 @@ class Shape extends React.Component {
     };
   }
 
+  renderAnchors(color) {
+    const {h, w} = this.props;
+
+    return getAnchorPoints({w, h}).map(point => (
+      <Circle
+        x={point.x}
+        y={point.y}
+        radius={5}
+        fill={color}
+      />
+    ));
+  }
+
   render() {
     const width     = this.props.w;
     const height    = this.props.h;
@@ -86,33 +100,7 @@ class Shape extends React.Component {
           strokeWidth={2}
         />
 
-        <Circle
-          x={0}
-          y={0}
-          radius={5}
-          fill={dotColor}
-        />
-
-        <Circle
-          x={width}
-          y={0}
-          radius={5}
-          fill={dotColor}
-        />
-
-        <Circle
-          x={width}
-          y={height}
-          radius={5}
-          fill={dotColor}
-        />
-
-        <Circle
-          x={0}
-          y={height}
-          radius={5}
-          fill={dotColor}
-        />
+        {this.renderAnchors(dotColor)}
       </Group>
     );
   }

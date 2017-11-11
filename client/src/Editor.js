@@ -11,10 +11,10 @@ class Editor extends React.Component {
       height: 0,
       selectedShapeId: null,
       shapes: [
-        { id: 0, x: 10, y: 10, w: 50, h: 50 },
-        { id: 1, x: 300, y: 10, w: 75, h: 50 },
-        { id: 2, x: 500, y: 100, w: 100, h: 50 },
-        { id: 3, x: 600, y: 160, w: 100, h: 50 },
+        { id: 0, x: 600, y: 100, w: 50, h: 50 },
+        { id: 1, x: 800, y: 300, w: 50, h: 50 },
+        { id: 2, x: 600, y: 500, w: 50, h: 50 },
+        { id: 3, x: 400, y: 300, w: 50, h: 50 },
       ],
       width: 0,
     };
