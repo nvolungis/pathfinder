@@ -7,10 +7,10 @@ const getPoints = point => {
   const {x, y, w, h} = point;
 
   return [
-    { x: x     , y: y     },
-    { x: x + w , y: y     },
-    { x: x + w , y: y + h },
-    { x: x     , y: y + h },
+    { x: x + (w / 2) , y: y           },
+    { x: x + w       , y: y + (h / 2) },
+    { x: x + (w / 2) , y: y + h       },
+    { x: x           , y: y + (h / 2) },
   ]
 };
 

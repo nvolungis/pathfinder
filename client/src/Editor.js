@@ -7,13 +7,14 @@ class Editor extends React.Component {
   constructor() {
     super();
     this.state = {
-      connections: [[0, 1], [1, 2], [2, 0]],
+      connections: [[0, 1], [1, 2], [2, 3], [3, 0]],
       height: 0,
       selectedShapeId: null,
       shapes: [
         { id: 0, x: 10, y: 10, w: 50, h: 50 },
         { id: 1, x: 300, y: 10, w: 75, h: 50 },
-        { id: 2, x: 500, y: 100, w: 100, h: 50 }
+        { id: 2, x: 500, y: 100, w: 100, h: 50 },
+        { id: 3, x: 600, y: 160, w: 100, h: 50 },
       ],
       width: 0,
     };
