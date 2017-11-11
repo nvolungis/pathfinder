@@ -3,14 +3,11 @@ import Connection    from './Connection';
 import DownpourStage from './DownpourStage';
 import Shape         from './Shape';
 
-
-const len = (p1, p2) => Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2))
-
 class Editor extends React.Component {
   constructor() {
     super();
     this.state = {
-      connections: [[0, 1]],
+      connections: [[0, 1], [1, 2], [2, 0]],
       height: 0,
       selectedShapeId: null,
       shapes: [

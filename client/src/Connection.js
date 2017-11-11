@@ -26,7 +26,7 @@ const getMinIndex = list => {
   return min.index;
 };
 
-const getPoint = (p1, p2) => {
+const optimizePoint1 = (p1, p2) => {
   const points = getPoints(p1);
   const lens   = points.map((p) => len(p, p2));
   const index  = getMinIndex(lens);
@@ -34,11 +34,16 @@ const getPoint = (p1, p2) => {
   return points[index];
 };
 
+const optimizeConnection = (from, to) => {
+  const fromOptim = optimizePoint1(from, to);
+  const toOptim = optimizePoint1(to, from);
+
+  return {from: fromOptim, to: toOptim};
+};
+
 class Connection extends React.Component {
   render() {
-    let {from, to} = this.props;
-
-    from = getPoint(from, to);
+    const {from, to} = optimizeConnection(this.props.from, this.props.to);
 
     return <Line
       stroke="#000000"
