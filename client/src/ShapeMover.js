@@ -1,35 +1,5 @@
-import React                from 'react';
-import {Group, Image, Rect} from 'react-konva';
-import move                 from './move.png';
-
-class ShapeMoverImage extends React.Component {
-  constructor() {
-    super();
-
-    this.state = { image: null };
-  }
-
-  componentDidMount() {
-    const image = new window.Image();
-    image.src = move;
-    image.onload = () => {
-      this.setState({ image: image });
-    }
-  }
-
-  render() {
-    if (!this.state.image) return null;
-
-    return (
-      <Image
-        image={this.state.image}
-        width={this.props.width}
-        height={this.props.height}
-      />
-    )
-  }
-}
-
+import React         from 'react';
+import {Group, Rect} from 'react-konva';
 
 class ShapeMover extends React.Component {
   constructor() {
