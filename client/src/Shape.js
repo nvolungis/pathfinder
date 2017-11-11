@@ -1,6 +1,5 @@
-import React                 from 'react';
-import {Circle, Group, Rect} from 'react-konva';
-import {getAnchorPoints}     from './util';
+import React         from 'react';
+import {Group, Rect} from 'react-konva';
 
 class Shape extends React.Component {
   constructor(props) {
@@ -84,19 +83,6 @@ class Shape extends React.Component {
     return `rgba(${color.join(', ')}, ${alpha})`;
   }
 
-  renderAnchors(color) {
-    const {h, w} = this.props;
-
-    return getAnchorPoints({w, h}).map(point => (
-      <Circle
-        x={point.x}
-        y={point.y}
-        radius={5}
-        fill={this.anchorColor}
-      />
-    ));
-  }
-
   render() {
     const width  = this.props.w;
     const height = this.props.h;
@@ -120,8 +106,6 @@ class Shape extends React.Component {
           stroke={this.color}
           strokeWidth={2}
         />
-
-        {this.renderAnchors()}
       </Group>
     );
   }
