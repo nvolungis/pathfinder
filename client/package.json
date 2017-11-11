@@ -6,8 +6,10 @@
     "react-scripts": "1.0.17"
   },
   "dependencies": {
+    "konva": "^1.7.6",
     "react": "^16.1.0",
-    "react-dom": "^16.1.0"
+    "react-dom": "^16.1.0",
+    "react-konva": "^1.6.2"
   },
   "scripts": {
     "start": "react-scripts start",
