@@ -2,6 +2,7 @@ import React         from 'react';
 import Connection    from './Connection';
 import DownpourStage from './DownpourStage';
 import Shape         from './Shape';
+import Grid          from './Grid';
 
 import {
   getAnchorPoints,
@@ -142,6 +143,7 @@ class Editor extends React.Component {
 
     return (
       <DownpourStage width={width} height={height} onClick={this.onStageClick}>
+        <Grid />
         {this.state.shapes.map(shape => (
           <Shape
             id={shape.id}
