@@ -32,7 +32,7 @@ class Editor extends React.Component {
   constructor() {
     super();
     this.state = {
-      connections: [[0, 1]],
+      connections: [],
       height: 0,
       selectedShapeId: null,
       shapes: [

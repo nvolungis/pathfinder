@@ -1,5 +1,5 @@
 import React  from 'react';
-import {Line} from 'react-konva';
+import Arrow from './Arrow';
 
 import {
   getAnchorPoints,
@@ -26,11 +26,7 @@ class Connection extends React.Component {
   render() {
     const {from, to} = optimizeConnection(this.props.from, this.props.to);
 
-    return <Line
-      stroke="#000000"
-      strokeWidth={2}
-      points={[from.x, from.y, to.x, to.y]}
-    />;
+    return <Arrow from={from} to={to} />
   }
 }
 
