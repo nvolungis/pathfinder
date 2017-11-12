@@ -1,5 +1,5 @@
-import React         from 'react';
-import {Layer, Line} from 'react-konva';
+import React  from 'react';
+import {Line} from 'react-konva';
 
 class Grid extends React.Component {
   constructor() {
@@ -34,6 +34,7 @@ class Grid extends React.Component {
     return [
       this.rows.map((_, index) => (
         <Line
+          key={index}
           strokeWidth={2}
           stroke={this.state.color}
           points={[0, index * gap, this.width, index * gap]}
@@ -42,6 +43,7 @@ class Grid extends React.Component {
 
       this.cols.map((_, index) => (
         <Line
+          key={index}
           strokeWidth={2}
           stroke={this.state.color}
           points={[index * gap, 0, index * gap, this.height]}
