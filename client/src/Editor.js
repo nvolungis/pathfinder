@@ -34,7 +34,9 @@ class Editor extends React.Component {
     super();
     this.state = {
       connections: [],
+      hasGrid: true,
       height: 0,
+      gridGap: 20,
       selectedShapeId: null,
       shapes: [
         { id: 0, x: 600, y: 100, w: 75, h: 50 },
@@ -143,9 +145,11 @@ class Editor extends React.Component {
 
     return (
       <DownpourStage width={width} height={height} onClick={this.onStageClick}>
-        <Grid />
+        {this.state.hasGrid && <Grid gap={this.state.gridGap} />}
         {this.state.shapes.map(shape => (
           <Shape
+            gridGap={this.state.gridGap}
+            snapToGrid={this.state.hasGrid}
             id={shape.id}
             x={shape.x}
             y={shape.y}

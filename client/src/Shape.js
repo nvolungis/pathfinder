@@ -6,6 +6,11 @@ class Shape extends React.Component {
   constructor(props) {
     super(props);
 
+    const snap = pos => {
+      const {gridGap} = this.props;
+      return Math.floor(pos / gridGap) * gridGap;
+    };
+
     this.state = {
       isMouseDown : false,
       isSelected  : false,
@@ -13,14 +18,14 @@ class Shape extends React.Component {
       rgbHover    : [0, 0, 255],
       startX      : 0,
       startY      : 0,
-      x           : this.props.x,
-      y           : this.props.y,
+      x           : snap(this.props.x),
+      y           : snap(this.props.y),
     };
 
     this.onMove = delta => {
       const position = {
-        x: this.state.x + delta.x,
-        y: this.state.y + delta.y,
+        x: snap(this.state.x + delta.x),
+        y: snap(this.state.y + delta.y),
       };
 
       this.props.updateShape(this.props.id, position);
