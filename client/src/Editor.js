@@ -32,6 +32,7 @@ const closest = (shapes, mousePos) => {
 class Editor extends React.Component {
   constructor() {
     super();
+
     this.state = {
       connections: [],
       hasGrid: true,
@@ -44,6 +45,7 @@ class Editor extends React.Component {
         { id: 2, x: 600, y: 500, w: 75, h: 50 },
         { id: 3, x: 400, y: 300, w: 75, h: 50 },
       ],
+      text: 'hi',
       width: 0,
     };
 
@@ -167,6 +169,7 @@ class Editor extends React.Component {
             y={shape.y}
             w={shape.w}
             h={shape.h}
+            text={this.state.text}
             isSelected={shape.id === this.state.selectedShapeId}
             key={shape.id}
             onClick={this.onShapeClick}

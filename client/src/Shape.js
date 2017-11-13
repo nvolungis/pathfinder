@@ -22,7 +22,6 @@ class Shape extends React.Component {
       rgbHover    : [0, 0, 255],
       startX      : 0,
       startY      : 0,
-      text        : 'snowflake',
       x           : snap(this.props.x),
       y           : snap(this.props.y),
     };
@@ -73,7 +72,7 @@ class Shape extends React.Component {
   get dimensions() {
     const horPadding = 20;
     const verPadding = 30;
-    const [textWidth, textHeight] = textDimensions(this.state.text, fontSize, fontFamily);
+    const [textWidth, textHeight] = textDimensions(this.props.text, fontSize, fontFamily);
     const width =  textWidth + horPadding * 2;
     const height = textHeight + verPadding * 2;
 
@@ -111,7 +110,7 @@ class Shape extends React.Component {
           fontFamily={fontFamily}
           fill='green'
           align='center'
-          text={this.state.text}
+          text={this.props.text}
         />
 
         <Rect
