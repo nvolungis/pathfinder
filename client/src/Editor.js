@@ -110,6 +110,18 @@ class Editor extends React.Component {
 
       this.setState({ potentialConnection: null });
     };
+
+    this.setShapeDimensions = (id, height, width) => {
+      this.setState((state, props) => {
+        return {shapes: state.shapes.map(shape => {
+          if (shape.id === id) {
+            return { ...shape, h: height, w: width };
+          }
+
+          return shape;
+        })};
+      });
+    };
   }
 
   componentDidMount() {
@@ -162,6 +174,7 @@ class Editor extends React.Component {
             createPotentialConnection={this.createPotentialConnection}
             updatePotentialConnection={this.updatePotentialConnection}
             completePotentialConnection={this.completePotentialConnection}
+            setDimensions={this.setShapeDimensions}
           />
         ))}
 

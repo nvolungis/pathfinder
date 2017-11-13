@@ -58,6 +58,12 @@ class Shape extends React.Component {
     };
   }
 
+  componentDidMount() {
+    const {width, height} = this.dimensions;
+
+    this.props.setDimensions(this.props.id, height, width);
+  }
+
   get color() {
     const {isHovering, rgb, rgbHover} = this.state;
     const color = isHovering ? rgbHover : rgb;
