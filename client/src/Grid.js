@@ -20,7 +20,7 @@ class Grid extends React.Component {
 
   get rows() {
     const numRows = Math.ceil(this.height / this.props.gap) + 5;
-    return Array.from(new Array(numRows))
+    return Array.from(new Array(numRows));
   }
 
   get cols() {
@@ -49,7 +49,7 @@ class Grid extends React.Component {
           points={[index * gap, 0, index * gap, this.height]}
         />
       )),
-    ]
+    ];
   }
 }
 

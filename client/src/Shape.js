@@ -1,6 +1,10 @@
-import React         from 'react';
-import {Group, Rect} from 'react-konva';
-import ShapeMover    from './ShapeMover';
+import React               from 'react';
+import {Group, Rect, Text} from 'react-konva';
+import ShapeMover          from './ShapeMover';
+import {textDimensions}    from './lib/text';
+
+const fontSize   = 16;
+const fontFamily = 'arial';
 
 class Shape extends React.Component {
   constructor(props) {
@@ -18,6 +22,7 @@ class Shape extends React.Component {
       rgbHover    : [0, 0, 255],
       startX      : 0,
       startY      : 0,
+      text        : 'snowflake',
       x           : snap(this.props.x),
       y           : snap(this.props.y),
     };
@@ -53,15 +58,41 @@ class Shape extends React.Component {
     };
   }
 
+  componentDidMount() {
+    const {width, height} = this.dimensions;
+
+    this.props.setDimensions(this.props.id, height, width);
+  }
+
   get color() {
     const {isHovering, rgb, rgbHover} = this.state;
     const color = isHovering ? rgbHover : rgb;
     return `rgb(${color.join(', ')})`;
   }
 
+  get dimensions() {
+    const horPadding = 20;
+    const verPadding = 30;
+    const [textWidth, textHeight] = textDimensions(this.state.text, fontSize, fontFamily);
+    const width =  textWidth + horPadding * 2;
+    const height = textHeight + verPadding * 2;
+
+    return {
+      width,
+      height,
+      text: {
+        x: (width - textWidth) / 2,
+        y: (height - textHeight) / 2,
+      }
+    }
+  }
+
   render() {
-    const width  = this.props.w;
-    const height = this.props.h;
+    const {
+      height,
+      width,
+      text: {x: textX, y: textY}
+    } = this.dimensions;
 
     return (
       <Group
@@ -73,6 +104,16 @@ class Shape extends React.Component {
         onMouseOver={this.onMouseOver}
         onMouseLeave={this.onMouseLeave}
       >
+        <Text
+          x={textX}
+          y={textY}
+          fontSize={fontSize}
+          fontFamily={fontFamily}
+          fill='green'
+          align='center'
+          text={this.state.text}
+        />
+
         <Rect
           x={0}
           y={0}
