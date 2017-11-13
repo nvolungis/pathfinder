@@ -58,9 +58,17 @@ class Shape extends React.Component {
   }
 
   componentDidMount() {
-    const {width, height} = this.dimensions;
+    const {width, height} = this.dimensions();
 
     this.props.setDimensions(this.props.id, height, width);
+  }
+
+  componentWillUpdate(nextProps) {
+    if (nextProps.text !== this.props.text) {
+      const {width, height} = this.dimensions(nextProps);
+
+      this.props.setDimensions(this.props.id, height, width);
+    }
   }
 
   get color() {
@@ -69,10 +77,10 @@ class Shape extends React.Component {
     return `rgb(${color.join(', ')})`;
   }
 
-  get dimensions() {
+  dimensions(props = this.props) {
     const horPadding = 20;
     const verPadding = 30;
-    const [textWidth, textHeight] = textDimensions(this.props.text, fontSize, fontFamily);
+    const [textWidth, textHeight] = textDimensions(props.text, fontSize, fontFamily);
     const width =  textWidth + horPadding * 2;
     const height = textHeight + verPadding * 2;
 
@@ -91,7 +99,7 @@ class Shape extends React.Component {
       height,
       width,
       text: {x: textX, y: textY}
-    } = this.dimensions;
+    } = this.dimensions();
 
     return (
       <Group
@@ -103,6 +111,16 @@ class Shape extends React.Component {
         onMouseOver={this.onMouseOver}
         onMouseLeave={this.onMouseLeave}
       >
+        <Rect
+          x={0}
+          y={0}
+          fill='#ffffff'
+          width={width}
+          height={height}
+          stroke={this.color}
+          strokeWidth={2}
+        />
+
         <Text
           x={textX}
           y={textY}
@@ -111,15 +129,6 @@ class Shape extends React.Component {
           fill='green'
           align='center'
           text={this.props.text}
-        />
-
-        <Rect
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-          stroke={this.color}
-          strokeWidth={2}
         />
 
         <ShapeMover

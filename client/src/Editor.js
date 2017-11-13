@@ -158,44 +158,53 @@ class Editor extends React.Component {
     const {connections, shapes, width, height, potentialConnection} = this.state;
 
     return (
-      <DownpourStage width={width} height={height} onClick={this.onStageClick}>
-        {this.state.hasGrid && <Grid gap={this.state.gridGap} />}
-        {this.state.shapes.map(shape => (
-          <Shape
-            gridGap={this.state.gridGap}
-            snapToGrid={this.state.hasGrid}
-            id={shape.id}
-            x={shape.x}
-            y={shape.y}
-            w={shape.w}
-            h={shape.h}
-            text={this.state.text}
-            isSelected={shape.id === this.state.selectedShapeId}
-            key={shape.id}
-            onClick={this.onShapeClick}
-            updateShape={this.updateShape}
-            createPotentialConnection={this.createPotentialConnection}
-            updatePotentialConnection={this.updatePotentialConnection}
-            completePotentialConnection={this.completePotentialConnection}
-            setDimensions={this.setShapeDimensions}
-          />
-        ))}
+      <div>
+        <DownpourStage width={width} height={height} onClick={this.onStageClick}>
+          {this.state.hasGrid && <Grid gap={this.state.gridGap} />}
+          {this.state.shapes.map(shape => (
+            <Shape
+              gridGap={this.state.gridGap}
+              snapToGrid={this.state.hasGrid}
+              id={shape.id}
+              x={shape.x}
+              y={shape.y}
+              w={shape.w}
+              h={shape.h}
+              text={this.state.text}
+              isSelected={shape.id === this.state.selectedShapeId}
+              key={shape.id}
+              onClick={this.onShapeClick}
+              updateShape={this.updateShape}
+              createPotentialConnection={this.createPotentialConnection}
+              updatePotentialConnection={this.updatePotentialConnection}
+              completePotentialConnection={this.completePotentialConnection}
+              setDimensions={this.setShapeDimensions}
+            />
+          ))}
 
-        {connections.map((conn, index) => (
-          <Connection
-            key={index}
-            from={shapes[conn[0]]}
-            to={shapes[conn[1]]}
-          />
-        ))}
+          {connections.map((conn, index) => (
+            <Connection
+              key={index}
+              from={shapes[conn[0]]}
+              to={shapes[conn[1]]}
+            />
+          ))}
 
-        {potentialConnection && (
-          <Connection
-            from={this.potentialConnectionData.from}
-            to={this.potentialConnectionData.to}
+          {potentialConnection && (
+            <Connection
+              from={this.potentialConnectionData.from}
+              to={this.potentialConnectionData.to}
+            />
+          )}
+        </DownpourStage>
+        <section style={{position: 'absolute', top: 0, background: 'white'}}>
+          <input
+            type="text"
+            value={this.state.text}
+            onChange={e => this.setState({text: e.target.value})}
           />
-        )}
-      </DownpourStage>
+        </section>
+      </div>
     )
   }
 }
