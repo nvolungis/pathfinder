@@ -30,6 +30,14 @@ const closest = (shapes, mousePos) => {
   return min;
 };
 
+const getId = list => {
+  let max = -1;
+
+  list.forEach(item => { if (item.id > max) max = item.id });
+
+  return max + 1;
+};
+
 class Editor extends React.Component {
   constructor() {
     super();
@@ -41,19 +49,42 @@ class Editor extends React.Component {
       gridGap: 10,
       selectedShapeId: null,
       shapes: [
-        { id: 0, x: 600, y: 100, w: 75, h: 50, text: "hi", isEditingText: false, },
-        { id: 1, x: 800, y: 300, w: 75, h: 50, text: "ho", isEditingText: false, },
-        { id: 2, x: 600, y: 500, w: 75, h: 50, text: "he", isEditingText: false, },
-        { id: 3, x: 400, y: 300, w: 75, h: 50, text: "ha", isEditingText: false, },
+        { id: 10, x: 600, y: 100, w: 75, h: 50, text: "hi", isEditingText: false, },
+        { id: 20, x: 800, y: 300, w: 75, h: 50, text: "ho", isEditingText: false, },
+        { id: 30, x: 600, y: 500, w: 75, h: 50, text: "he", isEditingText: false, },
+        { id: 40, x: 400, y: 300, w: 75, h: 50, text: "ha", isEditingText: false, },
       ],
       width: 0,
       padding: 10,
     };
 
-    this.onStageClick = (e) => {
+    this.onStageClick = e => {
+      if (this.isEditingText) {
+        this.setState(state => {
+          const shapes = state.shapes.map(shape => ({...shape, isEditingText: false}));
+          return { shapes }
+        });
+      } else {
+        const {layerX, layerY} = e.evt;
+        this.addShape({
+          x: layerX,
+          y: layerY,
+        });
+      }
+    };
+
+    this.addShape = ({x, y}) => {
       this.setState(state => {
-        const shapes = state.shapes.map(shape => ({...shape, isEditingText: false}));
-        return { shapes }
+        const shapes = state.shapes.concat([{
+          id: getId(state.shapes),
+          x, y,
+          w: 0,
+          h: 0,
+          text: "text",
+          isEditingText: true,
+        }]);
+
+        return {shapes};
       });
     };
 
@@ -99,18 +130,21 @@ class Editor extends React.Component {
     };
 
     this.completePotentialConnection = () => {
-      const {connections, potentialConnection} = this.state;
+      this.setState(state => {
+        let connections = state.connections;
 
-      if (potentialConnection.toId !== undefined) {
-        this.setState({
-          connections: connections.concat([[
-            potentialConnection.fromId,
-            potentialConnection.toId,
-          ]])
-        })
-      }
+        if (state.potentialConnection.toId !== undefined) {
+          connections = state.connections.concat([[
+            state.potentialConnection.fromId,
+            state.potentialConnection.toId,
+          ]]);
+        }
 
-      this.setState({ potentialConnection: null });
+        return {
+          connections,
+          potentialConnection: null,
+        }
+      });
     };
 
     this.setShapeDimensions = (id, height, width) => {
@@ -148,6 +182,15 @@ class Editor extends React.Component {
         })};
       });
     };
+
+    this.removeShape = id => {
+      this.setState(state => {
+        const shapes = state.shapes.filter(shape => shape.id !== id);
+        const connections = state.connections.filter(conn => !conn.includes(id));
+
+        return {connections, shapes};
+      });
+    };
   }
 
   componentDidMount() {
@@ -159,23 +202,19 @@ class Editor extends React.Component {
     window.removeEventListener('resize', this.updateDims);
   }
 
+  get isEditingText() {
+    return !!this.state.shapes.find(shape => shape.isEditingText);
+  }
+
   get potentialConnectionData() {
     const {potentialConnection, shapes} = this.state;
+    const from = shapes.find(shape => shape.id === potentialConnection.fromId);
 
-    if (potentialConnection.toId !== undefined) {
-      return {
-        from : shapes[potentialConnection.fromId],
-        to   : shapes[potentialConnection.toId],
-      }
-    }
+    const to = potentialConnection.toId !== undefined
+      ? shapes.find(shape => shape.id === potentialConnection.toId)
+      : { ...potentialConnection.mousePos, w: 0, h: 0 }
 
-    return {
-      from: shapes[potentialConnection.fromId],
-      to: {
-        ...potentialConnection.mousePos,
-        w: 0, h: 0,
-      }
-    }
+      return { from, to }
   }
 
   render() {
@@ -210,8 +249,8 @@ class Editor extends React.Component {
           {connections.map((conn, index) => (
             <Connection
               key={index}
-              from={shapes[conn[0]]}
-              to={shapes[conn[1]]}
+              from={shapes.find(shape => shape.id === conn[0])}
+              to={shapes.find(shape => shape.id === conn[1])}
             />
           ))}
 
@@ -222,6 +261,7 @@ class Editor extends React.Component {
             />
           )}
         </DownpourStage>
+
         {this.state.shapes.map(shape => (
           <ShapeTextInput
             key={shape.id}
@@ -229,6 +269,7 @@ class Editor extends React.Component {
             padding={this.state.padding}
             onTextChange={this.updateShapeText}
             setIsEditingText={this.setShapeIsEditingText}
+            remove={this.removeShape}
           />
         ))}
       </div>

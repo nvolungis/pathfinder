@@ -1,6 +1,25 @@
 import React from 'react';
 
+const DELETE_KEY = 8;
+
 class ShapeTextInput extends React.Component {
+  constructor() {
+    super();
+
+    this.onKeyDown = ({keyCode}) => {
+      if (keyCode === DELETE_KEY && this.props.shape.text === '') {
+        this.props.remove(this.props.shape.id)
+      }
+    };
+  }
+
+  componentDidMount() {
+    if (this.props.shape.isEditingText) {
+      this.input.focus();
+      this.input.select();
+    }
+  }
+
   get style () {
     const {x, y, h, w} = this.props.shape;
 
@@ -53,6 +72,7 @@ class ShapeTextInput extends React.Component {
           value={shape.text}
           style={this.inputStyle}
           onChange={(e) => onTextChange(shape.id, e.target.value)}
+          onKeyDown={this.onKeyDown}
           onClick={e => e.stopPropagation()}
         />
       </div>
