@@ -58,6 +58,7 @@ class ShapeMover extends React.Component {
         width={width}
         height={height}
         onMouseDown={this.onMouseDown}
+        onClick={e => this.props.onClick(e)}
       >
         <Rect
           x={0}

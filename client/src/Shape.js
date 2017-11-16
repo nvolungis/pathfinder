@@ -45,7 +45,7 @@ class Shape extends React.Component {
     this.onClick = (e) => {
       e.cancelBubble = true;
       this.setState({isSelected: true});
-      this.props.onClick(e, this.props.id);
+      this.props.setIsEditingText(this.props.id, true);
     };
 
     this.onMouseOver = e => {
@@ -126,26 +126,31 @@ class Shape extends React.Component {
           y={textY}
           fontSize={fontSize}
           fontFamily={fontFamily}
-          fill='green'
+          fill='black'
           align='center'
           text={this.props.text}
         />
 
-        <ShapeMover
-          isVisible={this.state.isHovering}
-          onMove={this.onMove}
-          onMoveEnd={this.onMoveEnd}
-        />
+        {!this.props.isEditingText && (
+          <ShapeMover
+            isVisible={this.state.isHovering}
+            onMove={this.onMove}
+            onMoveEnd={this.onMoveEnd}
+            onClick={e => e.cancelBubble = true}
+          />
+        )}
 
-        <ShapeConnector
-          width={width}
-          isVisible={this.state.isHovering}
-          createPotentialConnection={mousePos => {
-            this.props.createPotentialConnection(this.props.id, mousePos)
-          }}
-          updatePotentialConnection={this.props.updatePotentialConnection}
-          completePotentialConnection={this.props.completePotentialConnection}
-        />
+        {!this.props.isEditingText && (
+          <ShapeConnector
+            width={width}
+            isVisible={this.state.isHovering}
+            createPotentialConnection={mousePos => {
+              this.props.createPotentialConnection(this.props.id, mousePos)
+            }}
+            updatePotentialConnection={this.props.updatePotentialConnection}
+            completePotentialConnection={this.props.completePotentialConnection}
+          />
+        )}
       </Group>
     );
   }
@@ -156,6 +161,7 @@ class ShapeConnector extends React.Component {
     super();
 
     this.onMouseDown = e => {
+      e.cancelBubble = true;
       const {layerX, layerY} = e.evt;
       this.props.createPotentialConnection({x: layerX, y: layerY});
       document.addEventListener('mouseup', this.onMouseUp);

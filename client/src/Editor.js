@@ -1,8 +1,9 @@
-import React         from 'react';
-import Connection    from './Connection';
-import DownpourStage from './DownpourStage';
-import Shape         from './Shape';
-import Grid          from './Grid';
+import React          from 'react';
+import Connection     from './Connection';
+import DownpourStage  from './DownpourStage';
+import Shape          from './Shape';
+import Grid           from './Grid';
+import ShapeTextInput from './ShapeTextInput';
 
 import {
   getAnchorPoints,
@@ -35,26 +36,25 @@ class Editor extends React.Component {
 
     this.state = {
       connections: [],
-      hasGrid: true,
+      hasGrid: false,
       height: 0,
-      gridGap: 20,
+      gridGap: 10,
       selectedShapeId: null,
       shapes: [
-        { id: 0, x: 600, y: 100, w: 75, h: 50 },
-        { id: 1, x: 800, y: 300, w: 75, h: 50 },
-        { id: 2, x: 600, y: 500, w: 75, h: 50 },
-        { id: 3, x: 400, y: 300, w: 75, h: 50 },
+        { id: 0, x: 600, y: 100, w: 75, h: 50, text: "hi", isEditingText: false, },
+        { id: 1, x: 800, y: 300, w: 75, h: 50, text: "ho", isEditingText: false, },
+        { id: 2, x: 600, y: 500, w: 75, h: 50, text: "he", isEditingText: false, },
+        { id: 3, x: 400, y: 300, w: 75, h: 50, text: "ha", isEditingText: false, },
       ],
-      text: 'hi',
       width: 0,
-    };
-
-    this.onShapeClick = (e, id) => {
-      this.setState({selectedShapeId: id});
+      padding: 10,
     };
 
     this.onStageClick = (e) => {
-      this.setState({selectedShapeId: null});
+      this.setState(state => {
+        const shapes = state.shapes.map(shape => ({...shape, isEditingText: false}));
+        return { shapes }
+      });
     };
 
     this.updateShape = (id, position) => {
@@ -124,6 +124,30 @@ class Editor extends React.Component {
         })};
       });
     };
+
+    this.setShapeIsEditingText = (id, isEditingText) => {
+      this.setState((state, props) => {
+        return {shapes: state.shapes.map(shape => {
+          if (shape.id === id) {
+            return { ...shape, isEditingText};
+          }
+
+          return shape;
+        })};
+      });
+    };
+
+    this.updateShapeText = (id, text) => {
+      this.setState((state, props) => {
+        return {shapes: state.shapes.map(shape => {
+          if (shape.id === id) {
+            return { ...shape, text };
+          }
+
+          return shape;
+        })};
+      });
+    };
   }
 
   componentDidMount() {
@@ -170,15 +194,16 @@ class Editor extends React.Component {
               y={shape.y}
               w={shape.w}
               h={shape.h}
-              text={this.state.text}
+              text={shape.text}
               isSelected={shape.id === this.state.selectedShapeId}
+              isEditingText={shape.isEditingText}
               key={shape.id}
-              onClick={this.onShapeClick}
               updateShape={this.updateShape}
               createPotentialConnection={this.createPotentialConnection}
               updatePotentialConnection={this.updatePotentialConnection}
               completePotentialConnection={this.completePotentialConnection}
               setDimensions={this.setShapeDimensions}
+              setIsEditingText={this.setShapeIsEditingText}
             />
           ))}
 
@@ -197,13 +222,15 @@ class Editor extends React.Component {
             />
           )}
         </DownpourStage>
-        <section style={{position: 'absolute', top: 0, background: 'white'}}>
-          <input
-            type="text"
-            value={this.state.text}
-            onChange={e => this.setState({text: e.target.value})}
+        {this.state.shapes.map(shape => (
+          <ShapeTextInput
+            key={shape.id}
+            shape={shape}
+            padding={this.state.padding}
+            onTextChange={this.updateShapeText}
+            setIsEditingText={this.setShapeIsEditingText}
           />
-        </section>
+        ))}
       </div>
     )
   }
