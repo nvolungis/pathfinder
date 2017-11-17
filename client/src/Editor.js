@@ -56,7 +56,7 @@ class Editor extends React.Component {
       selectedShapeId: null,
       shapes: [],
       width: 0,
-      padding: 10,
+      padding: 15,
     };
 
     this.onStageClick = e => {
@@ -258,6 +258,21 @@ class Editor extends React.Component {
             onClick={this.onStageClick}
           />
             {this.state.hasGrid && <Grid gap={this.state.gridGap} />}
+
+            {connections.map((conn, index) => (
+              <Connection
+                key={index}
+                from={shapes.find(shape => shape.id === conn[0])}
+                to={shapes.find(shape => shape.id === conn[1])}
+              />
+            ))}
+
+            {potentialConnection && (
+              <Connection
+                from={this.potentialConnectionData.from}
+                to={this.potentialConnectionData.to}
+              />
+            )}
             {this.state.shapes.map(shape => (
               <Shape
                 gridGap={this.state.gridGap}
@@ -282,20 +297,6 @@ class Editor extends React.Component {
               />
             ))}
 
-            {connections.map((conn, index) => (
-              <Connection
-                key={index}
-                from={shapes.find(shape => shape.id === conn[0])}
-                to={shapes.find(shape => shape.id === conn[1])}
-              />
-            ))}
-
-            {potentialConnection && (
-              <Connection
-                from={this.potentialConnectionData.from}
-                to={this.potentialConnectionData.to}
-              />
-            )}
           </Layer>
           <Layer hitGraphEnabled={false}>
             <MouseShadow

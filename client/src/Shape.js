@@ -130,7 +130,7 @@ class Shape extends React.Component {
           text={this.props.text}
         />
 
-        {!this.props.isEditingText && (
+        {!this.props.isEditingText && this.props.isHovering && (
           <ShapeMover
             isVisible={this.props.isHovering}
             onMove={this.onMove}
@@ -139,7 +139,7 @@ class Shape extends React.Component {
           />
         )}
 
-        {!this.props.isEditingText && (
+        {!this.props.isEditingText && this.props.isHovering && (
           <ShapeConnector
             width={width}
             isVisible={this.props.isHovering}
