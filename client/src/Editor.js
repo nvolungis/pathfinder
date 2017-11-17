@@ -1,9 +1,15 @@
 import React          from 'react';
 import Connection     from './Connection';
-import DownpourStage  from './DownpourStage';
 import Shape          from './Shape';
 import Grid           from './Grid';
 import ShapeTextInput from './ShapeTextInput';
+import MouseShadow    from './MouseShadow';
+
+import {
+  Layer,
+  Rect,
+  Stage
+} from 'react-konva';
 
 import {
   getAnchorPoints,
@@ -48,12 +54,7 @@ class Editor extends React.Component {
       height: 0,
       gridGap: 10,
       selectedShapeId: null,
-      shapes: [
-        { id: 10, x: 600, y: 100, w: 75, h: 50, text: "hi", isEditingText: false, },
-        { id: 20, x: 800, y: 300, w: 75, h: 50, text: "ho", isEditingText: false, },
-        { id: 30, x: 600, y: 500, w: 75, h: 50, text: "he", isEditingText: false, },
-        { id: 40, x: 400, y: 300, w: 75, h: 50, text: "ha", isEditingText: false, },
-      ],
+      shapes: [],
       width: 0,
       padding: 10,
     };
@@ -66,10 +67,7 @@ class Editor extends React.Component {
         });
       } else {
         const {layerX, layerY} = e.evt;
-        this.addShape({
-          x: layerX,
-          y: layerY,
-        });
+        this.addShape({ x: layerX, y: layerY });
       }
     };
 
@@ -171,6 +169,18 @@ class Editor extends React.Component {
       });
     };
 
+    this.setShapeIsHovering = (id, isHovering) => {
+      this.setState((state, props) => {
+        return {shapes: state.shapes.map(shape => {
+          if (shape.id === id) {
+            return { ...shape, isHovering};
+          }
+
+          return shape;
+        })};
+      });
+    };
+
     this.updateShapeText = (id, text) => {
       this.setState((state, props) => {
         return {shapes: state.shapes.map(shape => {
@@ -206,6 +216,16 @@ class Editor extends React.Component {
     return !!this.state.shapes.find(shape => shape.isEditingText);
   }
 
+  get isHoveringOverShape() {
+    return !!this.state.shapes.find(shape => shape.isHovering);
+  }
+
+  get isAddIconVisible() {
+    return !this.isEditingText &&
+    !this.isHoveringOverShape &&
+    !this.state.potentialConnection
+  }
+
   get potentialConnectionData() {
     const {potentialConnection, shapes} = this.state;
     const from = shapes.find(shape => shape.id === potentialConnection.fromId);
@@ -217,51 +237,72 @@ class Editor extends React.Component {
       return { from, to }
   }
 
+  get wrapperStyle() {
+    return {
+      cursor: this.isAddIconVisible ? 'none' : 'default',
+    }
+  }
+
   render() {
     const {connections, shapes, width, height, potentialConnection} = this.state;
 
     return (
-      <div>
-        <DownpourStage width={width} height={height} onClick={this.onStageClick}>
-          {this.state.hasGrid && <Grid gap={this.state.gridGap} />}
-          {this.state.shapes.map(shape => (
-            <Shape
-              gridGap={this.state.gridGap}
-              snapToGrid={this.state.hasGrid}
-              id={shape.id}
-              x={shape.x}
-              y={shape.y}
-              w={shape.w}
-              h={shape.h}
-              text={shape.text}
-              isSelected={shape.id === this.state.selectedShapeId}
-              isEditingText={shape.isEditingText}
-              key={shape.id}
-              updateShape={this.updateShape}
-              createPotentialConnection={this.createPotentialConnection}
-              updatePotentialConnection={this.updatePotentialConnection}
-              completePotentialConnection={this.completePotentialConnection}
-              setDimensions={this.setShapeDimensions}
-              setIsEditingText={this.setShapeIsEditingText}
-            />
-          ))}
+      <div style={this.wrapperStyle}>
+      <Stage width={width} height={height}>
+        <Layer>
+          <Rect
+            x={0}
+            y={0}
+            width={width}
+            height={height}
+            onClick={this.onStageClick}
+          />
+            {this.state.hasGrid && <Grid gap={this.state.gridGap} />}
+            {this.state.shapes.map(shape => (
+              <Shape
+                gridGap={this.state.gridGap}
+                snapToGrid={this.state.hasGrid}
+                id={shape.id}
+                x={shape.x}
+                y={shape.y}
+                w={shape.w}
+                h={shape.h}
+                text={shape.text}
+                isSelected={shape.id === this.state.selectedShapeId}
+                isEditingText={shape.isEditingText}
+                isHovering={shape.isHovering}
+                key={shape.id}
+                updateShape={this.updateShape}
+                createPotentialConnection={this.createPotentialConnection}
+                updatePotentialConnection={this.updatePotentialConnection}
+                completePotentialConnection={this.completePotentialConnection}
+                setDimensions={this.setShapeDimensions}
+                setIsEditingText={this.setShapeIsEditingText}
+                setIsHovering={this.setShapeIsHovering}
+              />
+            ))}
 
-          {connections.map((conn, index) => (
-            <Connection
-              key={index}
-              from={shapes.find(shape => shape.id === conn[0])}
-              to={shapes.find(shape => shape.id === conn[1])}
-            />
-          ))}
+            {connections.map((conn, index) => (
+              <Connection
+                key={index}
+                from={shapes.find(shape => shape.id === conn[0])}
+                to={shapes.find(shape => shape.id === conn[1])}
+              />
+            ))}
 
-          {potentialConnection && (
-            <Connection
-              from={this.potentialConnectionData.from}
-              to={this.potentialConnectionData.to}
+            {potentialConnection && (
+              <Connection
+                from={this.potentialConnectionData.from}
+                to={this.potentialConnectionData.to}
+              />
+            )}
+          </Layer>
+          <Layer hitGraphEnabled={false}>
+            <MouseShadow
+              isVisible={this.isAddIconVisible}
             />
-          )}
-        </DownpourStage>
-
+          </Layer>
+        </Stage>
         {this.state.shapes.map(shape => (
           <ShapeTextInput
             key={shape.id}

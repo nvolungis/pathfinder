@@ -1,6 +1,7 @@
 import React               from 'react';
 import {Group, Rect, Text} from 'react-konva';
 import ShapeMover          from './ShapeMover';
+import Tip                 from './Tip';
 import {textDimensions}    from './lib/text';
 
 const fontSize   = 16;
@@ -19,7 +20,6 @@ class Shape extends React.Component {
       isMouseDown : false,
       isSelected  : false,
       rgb         : [0, 0, 0],
-      rgbHover    : [0, 0, 255],
       startX      : 0,
       startY      : 0,
       x           : snap(this.props.x),
@@ -49,11 +49,11 @@ class Shape extends React.Component {
     };
 
     this.onMouseOver = e => {
-      this.setState({isHovering: true});
+      this.props.setIsHovering(this.props.id, true)
     };
 
     this.onMouseLeave = e => {
-      this.setState({isHovering: false});
+      this.props.setIsHovering(this.props.id, false)
     };
   }
 
@@ -72,9 +72,8 @@ class Shape extends React.Component {
   }
 
   get color() {
-    const {isHovering, rgb, rgbHover} = this.state;
-    const color = isHovering ? rgbHover : rgb;
-    return `rgb(${color.join(', ')})`;
+    const {rgb} = this.state;
+    return `rgb(${rgb.join(', ')})`;
   }
 
   dimensions(props = this.props) {
@@ -133,7 +132,7 @@ class Shape extends React.Component {
 
         {!this.props.isEditingText && (
           <ShapeMover
-            isVisible={this.state.isHovering}
+            isVisible={this.props.isHovering}
             onMove={this.onMove}
             onMoveEnd={this.onMoveEnd}
             onClick={e => e.cancelBubble = true}
@@ -143,12 +142,20 @@ class Shape extends React.Component {
         {!this.props.isEditingText && (
           <ShapeConnector
             width={width}
-            isVisible={this.state.isHovering}
+            isVisible={this.props.isHovering}
             createPotentialConnection={mousePos => {
               this.props.createPotentialConnection(this.props.id, mousePos)
             }}
             updatePotentialConnection={this.props.updatePotentialConnection}
             completePotentialConnection={this.props.completePotentialConnection}
+          />
+        )}
+
+        {this.props.text === '' && (
+          <Tip
+            x={width / 2}
+            y={0}
+            text="Backspace again to remove me!"
           />
         )}
       </Group>

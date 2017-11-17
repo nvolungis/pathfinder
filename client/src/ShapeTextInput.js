@@ -1,6 +1,7 @@
 import React from 'react';
 
 const DELETE_KEY = 8;
+const ENTER_KEY = 13;
 
 class ShapeTextInput extends React.Component {
   constructor() {
@@ -9,6 +10,10 @@ class ShapeTextInput extends React.Component {
     this.onKeyDown = ({keyCode}) => {
       if (keyCode === DELETE_KEY && this.props.shape.text === '') {
         this.props.remove(this.props.shape.id)
+      }
+
+      if (keyCode === ENTER_KEY) {
+        this.props.setIsEditingText(this.props.shape.id, false);
       }
     };
   }
