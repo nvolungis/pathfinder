@@ -225,25 +225,16 @@ class ShapeConnector extends React.Component {
     const width  = 20;
     const height = 30;
 
-    const xtra = 10;
-
     return (
       <Group
-        width={this.props.width + xtra}
-        height={height + xtra / 2}
-        x={-xtra/2}
-        y={-(height + xtra/2 + 1)}
+        width={this.props.width}
+        height={height}
+        x={0}
+        y={0}
       >
-        <Rect
-          x={0}
-          y={0}
-          width={this.props.width + xtra}
-          height={height + xtra/2}
-        />
-
         <Group
-          x={this.props.width - width + xtra/2}
-          y={xtra/2}
+          x={this.props.width - width}
+          y={0}
           width={width}
           height={height}
         >
@@ -252,9 +243,9 @@ class ShapeConnector extends React.Component {
 
           <Rect
             x={0}
-            y={-xtra/2}
-            width={width + xtra/2}
-            height={height + xtra/2}
+            y={0}
+            width={width}
+            height={height}
             onMouseDown={this.onMouseDown}
             onMouseEnter={() => this.props.setCursor('-webkit-grab')}
             onMouseLeave={() => this.props.setCursor('default')}
