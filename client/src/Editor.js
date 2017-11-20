@@ -18,22 +18,21 @@ import {
 } from './lib/point-math';
 
 const closest = (shapes, mousePos) => {
-  const shapeLens = shapes.map(shape => {
-    const pointLens = getAnchorPoints(shape, "absolute").map(point => len(point, mousePos));
-    const minIndex  = getMinIndex(pointLens);
+  const hits = shapes.reduce((memo, shape) => {
+    const {x, y, w, h} = shape;
+    const {x: mx, y: my} = mousePos;
 
-    return {id: shape.id, len: pointLens[minIndex]}
-  });
+    const isOutsideHor = mx < x || mx > (x + w);
+    const isOutsideVert = my < y || my > (y + h);
 
-  let min = shapeLens[0];
-
-  shapeLens.forEach(entry => {
-    if (entry.len < min.len) {
-      min = entry;
+    if (!isOutsideHor && !isOutsideVert) {
+      return memo.concat(shape);
     }
-  });
 
-  return min;
+    return memo;
+  }, []);
+
+  return hits[0];
 };
 
 const getId = list => {
@@ -122,10 +121,15 @@ class Editor extends React.Component {
 
     this.updatePotentialConnection = mousePos => {
       const {shapes, potentialConnection} = this.state;
-      const closestShape = closest(shapes, mousePos);
-      const isntSelf = closestShape.id !== potentialConnection.fromId;
-      const isWithinThreshold = closestShape.len <= 20;
-      const toId = isntSelf && isWithinThreshold ? closestShape.id : undefined;
+      const hotShape = closest(shapes, mousePos);
+
+      console.log('hotshape', hotShape);
+
+      let toId = undefined;
+
+      if (hotShape && hotShape.id !== potentialConnection.fromId) {
+        toId = hotShape.id;
+      }
 
       this.setState({
         potentialConnection: {
