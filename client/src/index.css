@@ -10,7 +10,7 @@ input[type=text] {
 
 input[type=text]:focus {
   outline: none;
-  border: 2px solid pink;
+  border: 0px solid pink;
 }
 
 ::selection { background: pink; }

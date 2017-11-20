@@ -1,6 +1,6 @@
-import React                from 'react';
-import {Group, Rect, Image} from 'react-konva';
-import move                 from './move.png';
+import React  from 'react';
+import {Rect} from 'react-konva';
+import move   from './move.png';
 
 class ShapeMover extends React.Component {
   constructor() {
@@ -60,27 +60,21 @@ class ShapeMover extends React.Component {
   }
 
   render() {
-    const width = 15;
-    const height= 15;
+    const width = this.props.width;
+    const height= this.props.height;
 
     return (
-      <Group
-        x={5}
-        y={5}
+      <Rect
+        x={0}
+        y={0}
         width={width}
         height={height}
         onMouseDown={this.onMouseDown}
+        onMouseEnter={() => this.props.setCursor('move')}
+        onMouseLeave={() => this.props.setCursor('default')}
         onClick={e => this.props.onClick(e)}
       >
-        {this.state.image && (
-          <Image
-            image={this.state.image}
-            height={height}
-            width={width}
-          />
-        )}
-
-      </Group>
+      </Rect>
     );
   }
 }

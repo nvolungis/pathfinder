@@ -11,8 +11,8 @@ class MouseShadow extends React.Component {
     super();
     this.state = {x: 0, y: 0};
 
-    this.onMouseMove = ({layerX, layerY}) => {
-      this.setState({x: layerX, y: layerY});
+    this.onMouseMove = e => {
+      this.setState({x: e.clientX, y: e.clientY});
     };
   }
 

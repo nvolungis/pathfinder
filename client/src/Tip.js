@@ -3,7 +3,7 @@ import {Line, Rect, Text, Group} from 'react-konva';
 import {textDimensions}    from './lib/text';
 
 const fontSize        = 14;
-const fontFamily      = 'arial';
+const fontFamily      = 'helvetica';
 const horPadding      = 20;
 const vertPadding     = 15;
 const spaceFromTarget = 10;

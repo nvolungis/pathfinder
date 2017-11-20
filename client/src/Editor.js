@@ -49,14 +49,23 @@ class Editor extends React.Component {
     super();
 
     this.state = {
-      connections: [],
-      hasGrid: false,
-      height: 0,
-      gridGap: 10,
-      selectedShapeId: null,
-      shapes: [],
-      width: 0,
-      padding: 15,
+      connections     : [],
+      hasGrid         : true,
+      height          : 0,
+      gridGap         : 20,
+      selectedShapeId : null,
+      shapes          : [],
+      width           : 0,
+      padding         : 15,
+      cursor          : null,
+    };
+
+    this.setCursor = type => {
+      this.setState(state => {
+        return {
+          cursor: type === 'default' ? null : type,
+        }
+      });
     };
 
     this.onStageClick = e => {
@@ -78,7 +87,7 @@ class Editor extends React.Component {
           x, y,
           w: 0,
           h: 0,
-          text: "text",
+          text: "fuck",
           isEditingText: true,
         }]);
 
@@ -238,9 +247,13 @@ class Editor extends React.Component {
   }
 
   get wrapperStyle() {
-    return {
-      cursor: this.isAddIconVisible ? 'none' : 'default',
-    }
+    const cursor = this.state.cursor
+      ? this.state.cursor
+      : this.isAddIconVisible
+        ? 'none'
+        : 'default';
+
+    return { cursor }
   }
 
   render() {
@@ -291,6 +304,7 @@ class Editor extends React.Component {
                 createPotentialConnection={this.createPotentialConnection}
                 updatePotentialConnection={this.updatePotentialConnection}
                 completePotentialConnection={this.completePotentialConnection}
+                setCursor={this.setCursor}
                 setDimensions={this.setShapeDimensions}
                 setIsEditingText={this.setShapeIsEditingText}
                 setIsHovering={this.setShapeIsHovering}
@@ -311,6 +325,7 @@ class Editor extends React.Component {
             padding={this.state.padding}
             onTextChange={this.updateShapeText}
             setIsEditingText={this.setShapeIsEditingText}
+            setIsHovering={this.setShapeIsHovering}
             remove={this.removeShape}
           />
         ))}

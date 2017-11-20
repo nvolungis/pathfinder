@@ -1,8 +1,9 @@
 import React               from 'react';
-import {Group, Rect, Text} from 'react-konva';
 import ShapeMover          from './ShapeMover';
 import Tip                 from './Tip';
 import {textDimensions}    from './lib/text';
+
+import {Group, Rect, Text, Line} from 'react-konva';
 
 const fontSize   = 16;
 const fontFamily = 'arial';
@@ -20,6 +21,7 @@ class Shape extends React.Component {
       isMouseDown : false,
       isSelected  : false,
       rgb         : [0, 0, 0],
+      rgbEditing  : [255, 192, 203],
       startX      : 0,
       startY      : 0,
       x           : snap(this.props.x),
@@ -55,6 +57,10 @@ class Shape extends React.Component {
     this.onMouseLeave = e => {
       this.props.setIsHovering(this.props.id, false)
     };
+
+    this.onMoverClick = e => {
+      e.cancelBubble = true;
+    };
   }
 
   componentDidMount() {
@@ -69,11 +75,16 @@ class Shape extends React.Component {
 
       this.props.setDimensions(this.props.id, height, width);
     }
+
+    // if (!nextProps.isEditingText && this.props.isEditingText) {
+    //   this.props.setIsHovering(this.props.id, true)
+    // }
   }
 
   get color() {
-    const {rgb} = this.state;
-    return `rgb(${rgb.join(', ')})`;
+    const {rgb, rgbEditing} = this.state;
+    const color = this.props.isEditingText ? rgbEditing : rgb;
+    return `rgb(${color.join(', ')})`;
   }
 
   dimensions(props = this.props) {
@@ -87,6 +98,8 @@ class Shape extends React.Component {
       width,
       height,
       text: {
+        height: textHeight,
+        width: textWidth,
         x: (width - textWidth) / 2,
         y: (height - textHeight) / 2,
       }
@@ -97,7 +110,12 @@ class Shape extends React.Component {
     const {
       height,
       width,
-      text: {x: textX, y: textY}
+      text: {
+        x: textX,
+        y: textY,
+        width: textWidth,
+        height: textHeight,
+      }
     } = this.dimensions();
 
     return (
@@ -106,9 +124,9 @@ class Shape extends React.Component {
         y={this.props.y}
         width={width}
         height={height}
-        onClick={this.onClick}
         onMouseOver={this.onMouseOver}
         onMouseLeave={this.onMouseLeave}
+        ref={node => this.node = node}
       >
         <Rect
           x={0}
@@ -120,6 +138,18 @@ class Shape extends React.Component {
           strokeWidth={2}
         />
 
+        {!this.props.isEditingText && this.props.isHovering && (
+          <ShapeMover
+            height={height}
+            width={width}
+            isVisible={this.props.isHovering}
+            onMove={this.onMove}
+            onMoveEnd={this.onMoveEnd}
+            onClick={this.onMoverClick}
+            setCursor={this.props.setCursor}
+          />
+        )}
+
         <Text
           x={textX}
           y={textY}
@@ -130,14 +160,16 @@ class Shape extends React.Component {
           text={this.props.text}
         />
 
-        {!this.props.isEditingText && this.props.isHovering && (
-          <ShapeMover
-            isVisible={this.props.isHovering}
-            onMove={this.onMove}
-            onMoveEnd={this.onMoveEnd}
-            onClick={e => e.cancelBubble = true}
-          />
-        )}
+        <Rect
+          x={textX - 4}
+          y={textY - 4}
+          width={textWidth + 8}
+          height={textHeight + 8}
+          onClick={this.onClick}
+          onMouseEnter={() => this.props.setCursor('text')}
+          onMouseLeave={() => this.props.setCursor('default')}
+          // onMouseDown={e => e.cancelBubble}
+        />
 
         {!this.props.isEditingText && this.props.isHovering && (
           <ShapeConnector
@@ -148,6 +180,7 @@ class Shape extends React.Component {
             }}
             updatePotentialConnection={this.props.updatePotentialConnection}
             completePotentialConnection={this.props.completePotentialConnection}
+            setCursor={this.props.setCursor}
           />
         )}
 
@@ -190,20 +223,79 @@ class ShapeConnector extends React.Component {
 
   render() {
     const width  = 20;
-    const height = 20;
+    const height = 30;
+
+    const xtra = 10;
 
     return (
-      <Rect
-        x={this.props.width - width}
-        y={0}
-        width={width}
-        height={height}
-        stroke="#000"
-        strokeWidth={2}
-        onMouseDown={this.onMouseDown}
-      />
+      <Group
+        width={this.props.width + xtra}
+        height={height + xtra / 2}
+        x={-xtra/2}
+        y={-(height + xtra/2 + 1)}
+      >
+        <Rect
+          x={0}
+          y={0}
+          width={this.props.width + xtra}
+          height={height + xtra/2}
+        />
+
+        <Group
+          x={this.props.width - width + xtra/2}
+          y={xtra/2}
+          width={width}
+          height={height}
+        >
+
+          <ArrowIcon />
+
+          <Rect
+            x={0}
+            y={-xtra/2}
+            width={width + xtra/2}
+            height={height + xtra/2}
+            onMouseDown={this.onMouseDown}
+            onMouseEnter={() => this.props.setCursor('-webkit-grab')}
+            onMouseLeave={() => this.props.setCursor('default')}
+          />
+        </Group>
+      </Group>
     )
   }
+}
+
+const ArrowIcon = () => {
+  const width  = 20;
+  const height = 30;
+
+  const p1 = [0         , height/2];
+  const p2 = [width     , height/2];
+  const p3 = [p2[0] - 5 , p2[1] - 5];
+  const p4 = [width     , height/2];
+  const p5 = [p2[0] - 5 , p2[1] + 5];
+
+  const linePoints = p1.concat(p2);
+
+  const arrowheadPoints = p3.concat(p4).concat(p5);
+
+  return (
+    <Group>
+      <Line
+        stroke="black"
+        strokeWidth={2}
+        points={arrowheadPoints}
+        lineCap="round"
+      />
+
+      <Line
+        stroke="black"
+        strokeWidth={2}
+        points={linePoints}
+        lineCap="round"
+      />
+    </Group>
+  )
 }
 
 export default Shape;

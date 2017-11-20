@@ -14,6 +14,7 @@ class ShapeTextInput extends React.Component {
 
       if (keyCode === ENTER_KEY) {
         this.props.setIsEditingText(this.props.shape.id, false);
+        this.props.setIsHovering(this.props.shape.id, true)
       }
     };
   }
@@ -30,10 +31,10 @@ class ShapeTextInput extends React.Component {
 
     return {
       position: 'absolute',
-      left: `${x}px`,
-      top: `${y}px`,
-      height: `${h}px`,
-      width: `${w}px`,
+      left: `${x+1}px`,
+      top: `${y+1}px`,
+      height: `${h-2}px`,
+      width: `${w-2}px`,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -42,15 +43,17 @@ class ShapeTextInput extends React.Component {
   }
 
   get inputStyle () {
-    const {w} = this.props.shape;
+    const {x, y, h, w} = this.props.shape;
     const {padding} = this.props;
     const width = w - (padding * 2);
 
     return {
-      width: `${width}px`,
+      width: `100%`,
+      height: `100%`,
       textAlign: 'center',
-      fontFamily: 'arial',
+      fontFamily: 'helvetica',
       fontSize: "16px",
+      boxSizing: 'border-box',
     }
   }
 
