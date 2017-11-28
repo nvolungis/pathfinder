@@ -4,6 +4,7 @@ import Shape          from './Shape';
 import Grid           from './Grid';
 import ShapeTextInput from './ShapeTextInput';
 import MouseShadow    from './MouseShadow';
+import Toolbar        from './Toolbar';
 
 import {
   Layer,
