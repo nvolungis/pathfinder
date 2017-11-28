@@ -261,7 +261,13 @@ class Editor extends React.Component {
   }
 
   render() {
-    const {connections, shapes, width, height, potentialConnection} = this.state;
+    const {
+      connections,
+      height,
+      potentialConnection,
+      shapes,
+      width,
+    } = this.state;
 
     return (
       <div style={this.wrapperStyle}>

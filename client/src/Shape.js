@@ -131,7 +131,7 @@ class Shape extends React.Component {
         <Rect
           x={0}
           y={0}
-          fill='#ffffff'
+          fill="white"
           width={width}
           height={height}
           stroke={this.color}

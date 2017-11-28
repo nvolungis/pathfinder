@@ -7,24 +7,22 @@ import {
   len
 } from './lib/point-math';
 
-const optimizePoint1 = (p1, p2) => {
-  const points = getAnchorPoints(p1, "absolute");
-  const lens   = points.map(p => len(p, p2));
-  const index  = getMinIndex(lens);
+const getPoint = shape => {
+  const {x, y, w, h} = shape;
 
-  return points[index];
+  return {
+    x: x + w / 2,
+    y: y + h / 2 ,
+    w,
+    h,
+  };
 };
 
-const optimizeConnection = (from, to) => {
-  const fromOptim = optimizePoint1(from, to);
-  const toOptim = optimizePoint1(to, from);
-
-  return {from: fromOptim, to: toOptim};
-};
 
 class Connection extends React.Component {
   render() {
-    const {from, to} = optimizeConnection(this.props.from, this.props.to);
+    const from = getPoint(this.props.from);
+    const to   = getPoint(this.props.to);
 
     return <Arrow from={from} to={to} />
   }
