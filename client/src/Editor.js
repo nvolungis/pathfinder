@@ -58,6 +58,8 @@ class Editor extends React.Component {
       width           : 0,
       padding         : 15,
       cursor          : null,
+      selectedId      : null,
+      editingTextId   : null,
     };
 
     this.setCursor = type => {
@@ -70,10 +72,7 @@ class Editor extends React.Component {
 
     this.onStageClick = e => {
       if (this.isEditingText) {
-        this.setState(state => {
-          const shapes = state.shapes.map(shape => ({...shape, isEditingText: false}));
-          return { shapes }
-        });
+        this.setState(state => ({editingTextId: null}))
       } else {
         const {layerX, layerY} = e.evt;
         this.addShape({ x: layerX, y: layerY });
@@ -82,16 +81,16 @@ class Editor extends React.Component {
 
     this.addShape = ({x, y}) => {
       this.setState(state => {
+        const id = getId(state.shapes);
         const shapes = state.shapes.concat([{
-          id: getId(state.shapes),
+          id,
           x, y,
           w: 0,
           h: 0,
           text: "fuck",
-          isEditingText: true,
         }]);
 
-        return {shapes};
+        return {shapes, editingTextId: id};
       });
     };
 
@@ -123,8 +122,6 @@ class Editor extends React.Component {
     this.updatePotentialConnection = mousePos => {
       const {shapes, potentialConnection} = this.state;
       const hotShape = closest(shapes, mousePos);
-
-      console.log('hotshape', hotShape);
 
       let toId = undefined;
 
@@ -173,13 +170,7 @@ class Editor extends React.Component {
 
     this.setShapeIsEditingText = (id, isEditingText) => {
       this.setState((state, props) => {
-        return {shapes: state.shapes.map(shape => {
-          if (shape.id === id) {
-            return { ...shape, isEditingText};
-          }
-
-          return shape;
-        })};
+        return { editingTextId: isEditingText ? id : null };
       });
     };
 
@@ -227,7 +218,7 @@ class Editor extends React.Component {
   }
 
   get isEditingText() {
-    return !!this.state.shapes.find(shape => shape.isEditingText);
+    return this.state.editingTextId !== null;
   }
 
   get isHoveringOverShape() {
@@ -308,7 +299,7 @@ class Editor extends React.Component {
                 h={shape.h}
                 text={shape.text}
                 isSelected={shape.id === this.state.selectedShapeId}
-                isEditingText={shape.isEditingText}
+                isEditingText={shape.id === this.state.editingTextId}
                 isHovering={shape.isHovering}
                 key={shape.id}
                 updateShape={this.updateShape}
@@ -331,6 +322,7 @@ class Editor extends React.Component {
         </Stage>
         {this.state.shapes.map(shape => (
           <ShapeTextInput
+            isEditingText={shape.id === this.state.editingTextId}
             key={shape.id}
             shape={shape}
             padding={this.state.padding}
