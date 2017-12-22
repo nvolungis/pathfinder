@@ -1,0 +1,22 @@
+{
+  "name": "pathfinder",
+  "version": "1.0.0",
+  "description": "Lines and boxes",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=development && concurrently \"node ./server/startDev.js\" \"cd client && npm start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nvolungis/pathfinder.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nvolungis/pathfinder/issues"
+  },
+  "homepage": "https://github.com/nvolungis/pathfinder#readme",
+  "devDependencies": {
+    "concurrently": "^3.5.1"
+  }
+}
