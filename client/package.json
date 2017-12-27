@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "deepmerge": "^2.0.1",
     "konva": "^1.7.6",
     "react": "^16.2.0",
     "react-dom": "^16.1.0",

@@ -1,8 +1,9 @@
 import { createLogger }     from 'redux-logger'
 import createSagaMiddleware from 'redux-saga'
 import {all}                from 'redux-saga/effects';
-import * as user            from './user';
+import deepmerge            from 'deepmerge';
 import * as form            from './form';
+import * as user            from './user';
 
 import {
   applyMiddleware,
@@ -18,12 +19,19 @@ const combinedReducer = combineReducers({
   user : user.reducer,
 });
 
+const initialState = {
+  form: form.reducer(undefined, {}),
+  user: user.reducer(undefined, {}),
+};
+
+
 const rootReducer = (state, action) => {
   if(action.type === 'reset') {
-    return {
-      form: form.reducer(undefined, {}),
-      user: user.reducer(undefined, {}),
-    }
+    return initialState;
+  }
+
+  if(action.type === 'setState') {
+    return deepmerge(initialState, action.payload);
   }
 
   return combinedReducer(state, action);

@@ -1,14 +1,6 @@
 import axios  from 'axios';
 import logger from '../../logger';
 
-axios.interceptors.response.use(
-  response => response,
-  error => {
-    console.log(error);
-    return Promise.reject(error.response);
-  },
-);
-
 const client = axios.create({
   baseURL : '/api',
   headers : { 'Content-Type': 'application/json' },

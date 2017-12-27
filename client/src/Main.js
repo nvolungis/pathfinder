@@ -4,8 +4,7 @@ import Editor          from './Editor';
 import Home            from './Home';
 
 import {
-  AuthScreenContainer,
-  LogIn,
+  AuthScreen,
 } from './Auth';
 
 export default props => (
@@ -13,7 +12,7 @@ export default props => (
     <Switch>
       <Route exact path='/' component={Home} />
       <Route exact path='/editor' component={Editor} />
-      <Route path='/auth' component={AuthScreenContainer} />
+      <Route path='/auth' component={AuthScreen} />
     </Switch>
   </main>
 );

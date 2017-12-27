@@ -50,4 +50,24 @@ describe('reducer', () => {
       }});
     });
   });
+
+  describe('#clearError', () => {
+    it('clears the given field in given formId', () => {
+      const state = {'formId': {
+        title: 'title',
+        errors: {email: 'anError'},
+      }};
+
+      const action = actions.clearError({
+        formId: 'formId',
+        fieldName: 'email',
+      });
+
+      expect(reducer(state, action)).toEqual({'formId': {
+        title: 'title',
+        errors: {},
+      }});
+
+    });
+  });
 });

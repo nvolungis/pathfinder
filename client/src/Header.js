@@ -2,9 +2,13 @@ import React           from 'react';
 import {LinkWidget}    from './Auth';
 import {Switch, Route} from 'react-router';
 import {Link}          from 'react-router-dom';
+import {connect}       from 'react-redux';
+import {user}          from './store';
 import './header.css';
 
-export default () => (
+export const Header = ({
+  email,
+}) => (
   <Switch>
     <Route exact path='/editor' children={props => null} />
 
@@ -19,9 +23,18 @@ export default () => (
         </div>
 
         <div key='right' className='header__right'>
-          <LinkWidget />
+          <LinkWidget email={email} />
         </div>
       </header>
     )} />
   </Switch>
 );
+
+const HeaderContainer = connect(
+  state => ({
+    email: user.selectors.getUser(state).email,
+  }),
+  dispatch => ({}),
+)(Header);
+
+export default HeaderContainer;

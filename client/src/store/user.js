@@ -47,19 +47,23 @@ export const reducer = handleActions({
 
 export const saga = function* () {
   yield all([
-    takeEvery(actions.createUser.toString(), createUser)
+    takeEvery(actions.createUser.toString(), createUser),
+    takeEvery(actions.setUser.toString(), saveUserToLocalStorage),
   ]);
 };
 
 const createUser = function* ({payload}) {
+  const hasErrors = e => {
+    return e.response && e.response.data && e.response.data.errors;
+  };
+
   try {
     const {data: {user: {email}}} = yield call(api.createUser, payload);
     yield put(actions.setUser({email}));
   } catch (e) {
-    if (e.errors) {
-      return yield setFormErrors(e.errors);
+    if(hasErrors(e)) {
+      return yield setFormErrors(e.response.data.errors);
     }
-
     console.log(e);
   }
 };
@@ -76,4 +80,8 @@ const setFormErrors = function* (errors) {
       ...err,
     }), {}),
   }));
+};
+
+const saveUserToLocalStorage = function* ({payload: {email}}) {
+  localStorage.setItem('user', email);
 };
