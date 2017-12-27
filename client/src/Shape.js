@@ -1,9 +1,15 @@
-import React               from 'react';
-import ShapeMover          from './ShapeMover';
-import Tip                 from './Tip';
-import {textDimensions}    from './lib/text';
+import React            from 'react';
+import ShapeMover       from './ShapeMover';
+import Tip              from './Tip';
+import {textDimensions} from './lib/text';
+import {ButtonGroup}    from './Button';
 
-import {Group, Rect, Text, Line} from 'react-konva';
+import {
+  Group,
+  Line,
+  Rect,
+  Text,
+} from 'react-konva';
 
 const fontSize   = 16;
 const fontFamily = 'arial';
@@ -19,7 +25,6 @@ class Shape extends React.Component {
 
     this.state = {
       isMouseDown : false,
-      isSelected  : false,
       rgb         : [0, 0, 0],
       rgbEditing  : [255, 192, 203],
       startX      : 0,
@@ -46,7 +51,7 @@ class Shape extends React.Component {
 
     this.onClick = (e) => {
       e.cancelBubble = true;
-      this.setState({isSelected: true});
+      this.props.setSelectedId(this.props.id);
       this.props.setIsEditingText(this.props.id, true);
     };
 
@@ -59,6 +64,7 @@ class Shape extends React.Component {
     };
 
     this.onMoverClick = e => {
+      this.props.setSelectedId(this.props.id)
       e.cancelBubble = true;
     };
   }
@@ -70,15 +76,10 @@ class Shape extends React.Component {
   }
 
   componentWillUpdate(nextProps) {
-    if (nextProps.text !== this.props.text) {
-      const {width, height} = this.dimensions(nextProps);
+    if (nextProps.text === this.props.text) return;
 
-      this.props.setDimensions(this.props.id, height, width);
-    }
-
-    // if (!nextProps.isEditingText && this.props.isEditingText) {
-    //   this.props.setIsHovering(this.props.id, true)
-    // }
+    const {width, height} = this.dimensions(nextProps);
+    this.props.setDimensions(this.props.id, height, width);
   }
 
   get color() {
@@ -137,6 +138,8 @@ class Shape extends React.Component {
           stroke={this.color}
           strokeWidth={2}
         />
+
+        {this.props.isSelected && <ButtonGroup x={width / 2} />}
 
         {!this.props.isEditingText && this.props.isHovering && (
           <ShapeMover
@@ -238,9 +241,7 @@ class ShapeConnector extends React.Component {
           width={width}
           height={height}
         >
-
           <ArrowIcon />
-
           <Rect
             x={0}
             y={0}

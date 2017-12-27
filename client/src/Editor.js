@@ -5,6 +5,7 @@ import Grid           from './Grid';
 import ShapeTextInput from './ShapeTextInput';
 import MouseShadow    from './MouseShadow';
 import Toolbar        from './Toolbar';
+import { getId }      from './lib/util';
 
 import {
   Layer,
@@ -15,51 +16,27 @@ import {
 import {
   getAnchorPoints,
   getMinIndex,
-  len
+  len,
+  shapeIdHoveredOver,
 } from './lib/point-math';
 
-const closest = (shapes, mousePos) => {
-  const hits = shapes.reduce((memo, shape) => {
-    const {x, y, w, h} = shape;
-    const {x: mx, y: my} = mousePos;
-
-    const isOutsideHor = mx < x || mx > (x + w);
-    const isOutsideVert = my < y || my > (y + h);
-
-    if (!isOutsideHor && !isOutsideVert) {
-      return memo.concat(shape);
-    }
-
-    return memo;
-  }, []);
-
-  return hits[0];
-};
-
-const getId = list => {
-  let max = -1;
-
-  list.forEach(item => { if (item.id > max) max = item.id });
-
-  return max + 1;
-};
+const DEFAULT_TEXT = 'fuk';
 
 class Editor extends React.Component {
   constructor() {
     super();
 
     this.state = {
-      connections     : [],
-      hasGrid         : true,
-      height          : 0,
-      gridGap         : 20,
-      selectedShapeId : null,
-      shapes          : [],
-      width           : 0,
-      padding         : 15,
-      cursor          : null,
-      selectedId      : null,
-      editingTextId   : null,
+      connections   : [],
+      hasGrid       : true,
+      height        : 0,
+      gridGap       : 20,
+      selectedId    : null,
+      shapes        : [],
+      width         : 0,
+      padding       : 15,
+      cursor        : null,
+      editingTextId : null,
     };
 
     this.setCursor = type => {
@@ -72,7 +49,10 @@ class Editor extends React.Component {
 
     this.onStageClick = e => {
       if (this.isEditingText) {
-        this.setState(state => ({editingTextId: null}))
+        this.setState(state => ({
+          editingTextId: null,
+          selectedId: null,
+        }))
       } else {
         const {layerX, layerY} = e.evt;
         this.addShape({ x: layerX, y: layerY });
@@ -83,25 +63,22 @@ class Editor extends React.Component {
       this.setState(state => {
         const id = getId(state.shapes);
         const shapes = state.shapes.concat([{
-          id,
-          x, y,
-          w: 0,
-          h: 0,
-          text: "fuck",
+          id, x, y, w: 0, h: 0, text: DEFAULT_TEXT,
         }]);
 
-        return {shapes, editingTextId: id};
+        return {
+          shapes,
+          editingTextId: id,
+          selectedId: id,
+        };
       });
     };
 
     this.updateShape = (id, position) => {
-      const shapes = this.state.shapes.map(shape => {
-        if (shape.id === id) {
-          return { ...shape, ...position }
-        }
-
-        return shape;
-      })
+      const shapes = this.state.shapes.map(shape => shape.id === id
+        ? { ...shape, ...position }
+        : shape
+      );
 
       this.setState({shapes});
     };
@@ -114,14 +91,12 @@ class Editor extends React.Component {
     };
 
     this.createPotentialConnection = (id, mousePos) => {
-      this.setState({
-        potentialConnection: {fromId: id, mousePos}
-      });
+      this.setState({ potentialConnection: {fromId: id, mousePos} });
     };
 
     this.updatePotentialConnection = mousePos => {
       const {shapes, potentialConnection} = this.state;
-      const hotShape = closest(shapes, mousePos);
+      const hotShape = shapeIdHoveredOver(shapes, mousePos);
 
       let toId = undefined;
 
@@ -157,15 +132,14 @@ class Editor extends React.Component {
     };
 
     this.setShapeDimensions = (id, height, width) => {
-      this.setState((state, props) => {
-        return {shapes: state.shapes.map(shape => {
-          if (shape.id === id) {
-            return { ...shape, h: height, w: width };
-          }
-
-          return shape;
-        })};
-      });
+      this.setState((state, props) => ({
+        shapes: state.shapes.map(shape => {
+          return shape.id === id
+            ? { ...shape, h: height, w: width }
+            : shape
+          })
+        }
+      ));
     };
 
     this.setShapeIsEditingText = (id, isEditingText) => {
@@ -205,6 +179,11 @@ class Editor extends React.Component {
 
         return {connections, shapes};
       });
+    };
+
+    this.setSelectedId = id => {
+      console.log('id',id)
+      this.setState(state => ({ selectedId: id }));
     };
   }
 
@@ -298,7 +277,7 @@ class Editor extends React.Component {
                 w={shape.w}
                 h={shape.h}
                 text={shape.text}
-                isSelected={shape.id === this.state.selectedShapeId}
+                isSelected={shape.id === this.state.selectedId}
                 isEditingText={shape.id === this.state.editingTextId}
                 isHovering={shape.isHovering}
                 key={shape.id}
@@ -310,6 +289,7 @@ class Editor extends React.Component {
                 setDimensions={this.setShapeDimensions}
                 setIsEditingText={this.setShapeIsEditingText}
                 setIsHovering={this.setShapeIsHovering}
+                setSelectedId={this.setSelectedId}
               />
             ))}
 

@@ -62,3 +62,22 @@ export const getAngle = (p1, p2) => {
 
   return adjustAngle();
 };
+
+
+export const shapeIdHoveredOver = (shapes, mousePos) => {
+  const hits = shapes.reduce((memo, shape) => {
+    const {x, y, w, h} = shape;
+    const {x: mx, y: my} = mousePos;
+
+    const isOutsideHor = mx < x || mx > (x + w);
+    const isOutsideVert = my < y || my > (y + h);
+
+    if (!isOutsideHor && !isOutsideVert) {
+      return memo.concat(shape);
+    }
+
+    return memo;
+  }, []);
+
+  return hits[0];
+};

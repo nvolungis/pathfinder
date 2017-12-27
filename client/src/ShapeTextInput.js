@@ -20,7 +20,7 @@ class ShapeTextInput extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.shape.isEditingText) {
+    if (this.props.isEditingText) {
       this.input.focus();
       this.input.select();
     }
@@ -38,7 +38,7 @@ class ShapeTextInput extends React.Component {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      zIndex: this.props.shape.isEditingText ? 1 : -1,
+      zIndex: this.props.isEditingText ? 1 : -1,
     }
   }
 
