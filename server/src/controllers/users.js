@@ -40,25 +40,34 @@ exports.logout = function(req, res, next) {
 // -------------------------------------------
 
 exports.register = function(req, res, next) {
-  
+  const newUser = new User(req.body);
+  const errors  = newUser.validateSync();
+
+  if (errors) {
+    res.status(400);
+    res.json(errors);
+    return;
+  }
+
   User.findOne({ email: req.body.email }, (err, user) => {
     // is email address already in use?
-    if (user) {      
-      res.json({ success: false, message: "Email already in use" })
-      return 
+    if (user) {
+      res.status(403);
+      res.send({errors: [{email: "This email is taken" }]});
+      return;
     }
+
     // go ahead and create the new user
-    else {
-      User.create(req.body, (err) => {
-        if (err) {
-          console.error(err)
-          res.json({ success: false })
-          return
-        }
-        res.json({ success: true })
-        return 
-      })
-    }
+    newUser.save((err, user) => {
+      if (err) {
+        res.status(400);
+        res.json({ err })
+        return;
+      }
+      res.status(201);
+      res.json({ user })
+      return;
+    });
   })
 
 }

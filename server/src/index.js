@@ -41,9 +41,9 @@ configureExpress(app, passport)
 
 // -------------------------------------------
 
-app.post("/login", users.login)
-app.get("/logout", users.logout)
-app.post("/register", users.register)
+app.post("/api/login", users.login)
+app.get("/api/logout", users.logout)
+app.post("/api/user", users.register)
 
 app.get("*", (req, res, next) => {  
 

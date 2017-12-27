@@ -1,17 +1,21 @@
 // Defining a User Model in mongoose
 // Code modified from https://github.com/sahat/hackathon-starter
-import bcrypt from "bcrypt-nodejs";
-import mongoose from "mongoose";
-import crypto from "crypto";
+import bcrypt    from "bcrypt-nodejs";
+import mongoose  from "mongoose";
+import crypto    from "crypto";
 
 const UserSchema = new mongoose.Schema({
   email: {
-    type: String,
-    unique: true,
-    lowercase: true
+    type      : String,
+    unique    : true,
+    lowercase : true,
+    required  : true,
   },
-  password: String,
-})
+  password: {
+    type     : String,
+    required : true,
+  }
+});
 
 /**
  * Password hash middleware.

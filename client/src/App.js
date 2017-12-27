@@ -1,9 +1,8 @@
-import React        from 'react';
-import Header       from './Header';
-import Editor       from './Editor';
-import Main         from './Main';
+import React           from 'react';
+import Header          from './Header';
+import Main            from './Main';
 
-const Footer = () => (<footer>footer</footer>);
+const Footer = () => (<footer className='Footer'>footer</footer>);
 
 class App extends React.Component {
   render() {
