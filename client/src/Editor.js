@@ -4,7 +4,6 @@ import Shape          from './Shape';
 import Grid           from './Grid';
 import ShapeTextInput from './ShapeTextInput';
 import MouseShadow    from './MouseShadow';
-import Toolbar        from './Toolbar';
 import { getId }      from './lib/util';
 
 import {
@@ -14,9 +13,6 @@ import {
 } from 'react-konva';
 
 import {
-  getAnchorPoints,
-  getMinIndex,
-  len,
   shapeIdHoveredOver,
 } from './lib/point-math';
 

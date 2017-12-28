@@ -43,10 +43,6 @@ class ShapeTextInput extends React.Component {
   }
 
   get inputStyle () {
-    const {x, y, h, w} = this.props.shape;
-    const {padding} = this.props;
-    const width = w - (padding * 2);
-
     return {
       width: `100%`,
       height: `100%`,

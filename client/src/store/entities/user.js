@@ -85,6 +85,6 @@ const setFormErrors = function* (errors) {
   }));
 };
 
-const saveUserToLocalStorage = function* ({payload: {email}}) {
+const saveUserToLocalStorage = function ({payload: {email}}) {
   localStorage.setItem('user', email || '');
 };

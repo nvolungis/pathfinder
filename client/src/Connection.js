@@ -1,12 +1,6 @@
 import React from 'react';
 import Arrow from './Arrow';
 
-import {
-  getAnchorPoints,
-  getMinIndex,
-  len
-} from './lib/point-math';
-
 const getPoint = shape => {
   const {x, y, w, h} = shape;
 

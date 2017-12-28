@@ -1,5 +1,3 @@
-const isDev = process.env.NODE_ENV === 'development';
-
 const devLogger = {
   info  : console.info,
   log   : console.log,
@@ -25,6 +23,7 @@ const logger = () => {
     case 'development' : return devLogger;
     case 'test'        : return testLogger;
     case 'production'  : return prodLogger;
+    default: throw(new Error('no NODE_ENV present'))
   }
 };
 

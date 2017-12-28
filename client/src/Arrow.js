@@ -1,21 +1,11 @@
-import React                        from 'react';
-import {Line, Group, Wedge}         from 'react-konva';
-import {getAngle, len, getMinIndex} from './lib/point-math';
+import React                from 'react';
+import {Line, Group, Wedge} from 'react-konva';
+import {getAngle}           from './lib/point-math';
 
 const getTanDeg = (deg) => {
   var rad = deg * Math.PI/180;
   return Math.tan(rad);
-}
-
-const getSinDeg = deg => {
-  var rad = deg * Math.PI/180;
-  return Math.sin(rad);
-}
-
-const getCosDeg = deg => {
-  var rad = deg * Math.PI/180;
-  return Math.cos(rad);
-}
+};
 
 const enumeratePoints = (angle, to) => {
   return [{
