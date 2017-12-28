@@ -3,7 +3,7 @@ import {LinkWidget}    from './Auth';
 import {Switch, Route} from 'react-router';
 import {Link}          from 'react-router-dom';
 import {connect}       from 'react-redux';
-import {user}          from './store';
+import {user}          from './store/entities';
 import './header.css';
 
 export const Header = ({

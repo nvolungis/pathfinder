@@ -2,18 +2,19 @@ import React     from 'react';
 import {connect} from 'react-redux';
 import Header    from './Header';
 import Main      from './Main';
-import {user}    from './store';
+import {user}    from './store/entities';
+import store     from './store';
 
 const Footer = () => (<footer className='Footer'>footer</footer>);
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
-    if (localStorage.getItem('user')) {
-      props.setUser({
+    if(localStorage.getItem('user')) {
+      store.dispatch(user.actions.setUser({
         email: localStorage.getItem('user')
-      });
+      }));
     }
   }
 
@@ -28,11 +29,4 @@ class App extends React.Component {
   }
 }
 
-const AppContainer = connect(
-  state => ({}),
-  dispatch => ({
-    setUser: data => dispatch(user.actions.setUser(data)),
-  }),
-)(App);
-
-export default AppContainer;
+export default App;

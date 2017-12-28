@@ -7,7 +7,7 @@ export default class RegisterForm extends React.Component {
     super(props);
 
     this.state = {
-      alreadyRegistered: Boolean(props.user.email),
+      alreadyRegistered: Boolean(props.user.email)
     };
   }
 

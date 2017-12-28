@@ -7,13 +7,16 @@ import store          from '../store';
 import Page           from './support/page';
 import {user}         from '../store';
 
-const asyncFlush = () => new Promise(resolve => setTimeout(resolve, 0));
+afterEach(() => {
+  store.dispatch({type: 'reset'});
+  localStorage.clear();
+});
 
 it('sets user if present in localstorage', async () => {
   localStorage.setItem('user', 'test@test.com');
   const page = new Page({store});
 
-  await asyncFlush();
+  await page.allowRender();
 
   expect(page.text).toContain('Log Out test@test.com');
 });

@@ -1,5 +1,5 @@
-import request from './util/request';
-import {form}  from '../store';
+import request   from '../util/request';
+import * as form from './form';
 
 import {
   createAction,
@@ -34,11 +34,14 @@ export const selectors = {
  * REDUCER
  */
 
+export const initialState = {};
+
 export const reducer = handleActions({
   [actions.setUser]: (state, {payload}) => {
     return payload;
   },
-}, {});
+// }, {email: localStorage.getItem('user')});
+}, initialState);
 
 /*
  * SAGAS
@@ -83,5 +86,5 @@ const setFormErrors = function* (errors) {
 };
 
 const saveUserToLocalStorage = function* ({payload: {email}}) {
-  localStorage.setItem('user', email);
+  localStorage.setItem('user', email || '');
 };

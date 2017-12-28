@@ -4,7 +4,7 @@ import RegisterForm    from './RegisterForm';
 import LogInForm       from './LogInForm';
 import LogOutForm      from './LogOutForm';
 import {connect}       from 'react-redux';
-import {form, user}    from '../store';
+import {form, user}    from '../store/entities';
 
 const AuthScreen = ({
   match,

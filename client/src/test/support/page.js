@@ -15,14 +15,20 @@ export default class Page {
 
     this.wrapper = mount(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/auth/register']} initialIndex={0} >
+        <MemoryRouter initialEntries={[location]} initialIndex={0} >
           <App />
         </MemoryRouter>
       </Provider>
     );
   }
 
+  allowRender() {
+    return new Promise(resolve => setTimeout(resolve, 0));
+  }
+
   get text() {
     return this.wrapper.text();
   }
+
+
 }

@@ -26,6 +26,21 @@ export const selectors = {
  * REDUCER
  */
 
+export const initialState = {
+  'register': {
+    title: "Sign Up",
+    fields: [{
+      name: 'email',
+      label: 'Email',
+      placeholder: 'neil@gmail.com',
+    }, {
+      name: 'password',
+      label: 'Password',
+      placeholder: '********',
+    }]
+  }
+};
+
 export const reducer = handleActions({
   [actions.setErrors]: (state, {payload: {formId, errors}}) => {
     const form = state[formId];
@@ -56,17 +71,4 @@ export const reducer = handleActions({
       }
     }
   },
-}, {
-  'register': {
-    title: "Sign Up",
-    fields: [{
-      name: 'email',
-      label: 'Email',
-      placeholder: 'neil@gmail.com',
-    }, {
-      name: 'password',
-      label: 'Password',
-      placeholder: '********',
-    }]
-  }
-});
+}, initialState);
