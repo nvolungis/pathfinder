@@ -18,10 +18,6 @@ export const Header = ({
           <Link to="/editor">Editor</Link>
         </div>
 
-        <div key='center' className='header__center'>
-          crosstree
-        </div>
-
         <div key='right' className='header__right'>
           <LinkWidget email={email} />
         </div>

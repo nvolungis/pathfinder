@@ -1,5 +1,4 @@
 import React            from 'react';
-import ReactDOM         from 'react-dom';
 import store            from '../store';
 import mockAxios        from './support/mock-axios';
 import RegistrationPage from './support/registration-page';
@@ -40,7 +39,7 @@ describe('registration', () => {
     page.fillInPasswordField('tstpassword');
     page.submit();
 
-    const errors = [{email: 'This email is taken'}];
+    const errors = {email: {message: 'This email is taken'}};
     mockAxios.mockError({status: 400, data: {errors}});
     await page.allowRender();
 
@@ -48,7 +47,7 @@ describe('registration', () => {
   });
 
   it('clears errors on focus', async () => {
-    const errors       = {email: 'This email is taken'};
+    const errors       = {email: {message: 'This email is taken'}};
     const initialState = {form: {register: {errors}}};
     const page         = new RegistrationPage({store, initialState});
 

@@ -50,8 +50,8 @@ export default class Form extends React.Component {
                 });
               }}
             />
-            {errors[field.name] && (
-              <span> {errors[field.name]} </span>
+            {Boolean(errors[field.name]) && (
+              <span> {errors[field.name].message} </span>
             )}
           </label>
         ))}

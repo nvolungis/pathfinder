@@ -8,8 +8,8 @@ export default class Page {
   constructor({ initialState, location='/', store }) {
     if(initialState) {
       store.dispatch({
-        type: 'setState',
-        payload: initialState
+        type    : 'setState',
+        payload : initialState
       });
     }
 
@@ -20,6 +20,11 @@ export default class Page {
         </MemoryRouter>
       </Provider>
     );
+  }
+
+  clickLogout() {
+    const logout = this.wrapper.find('a[href="/auth/log-out"]')
+    logout.simulate('click', {button:0});
   }
 
   allowRender() {

@@ -41,14 +41,17 @@ const AuthScreen = ({
 );
 
 export default connect(
-  state => ({
-    registerForm : form.selectors.getForm(state, 'register'),
-    user         : user.selectors.getUser(state),
-  }),
+  state => {
+    const data = form.selectors.getForm(state, 'register');
+    return {
+      registerForm : data,
+      user         : user.selectors.getUser(state),
+    }
+  },
   dispatch => ({
     onLogInSubmit    : data => dispatch(user.actions.createUser(data)),
     onRegisterSubmit : data => dispatch(user.actions.createUser(data)),
-    onLogOutSubmit   : data => console.log(data),
+    onLogOutSubmit   : data => dispatch(user.actions.logOut()),
     onFieldFocus     : data => dispatch(form.actions.clearError(data)),
   })
 )(AuthScreen);

@@ -19,6 +19,7 @@ export default class RegisterForm extends React.Component {
       user,
     } = this.props;
 
+
     if(this.state.alreadyRegistered) {
       return <Redirect to="/" />
     }

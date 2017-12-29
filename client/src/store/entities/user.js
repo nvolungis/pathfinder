@@ -20,6 +20,7 @@ import {
 export const actions = {
   createUser : createAction('create user'),
   setUser    : createAction('set user'),
+  logOut     : createAction('log out'),
 };
 
 /*
@@ -40,7 +41,10 @@ export const reducer = handleActions({
   [actions.setUser]: (state, {payload}) => {
     return payload;
   },
-// }, {email: localStorage.getItem('user')});
+
+  [actions.logOut]: (state, {payload}) => {
+    return initialState;
+  },
 }, initialState);
 
 /*
@@ -52,6 +56,7 @@ export const saga = function* () {
   yield all([
     takeEvery(actions.createUser.toString(), createUser),
     takeEvery(actions.setUser.toString(), saveUserToLocalStorage),
+    takeEvery(actions.logOut.toString(), removeUserFromLocalStorage),
   ]);
 };
 
@@ -78,13 +83,14 @@ const api = {
 const setFormErrors = function* (errors) {
   yield put(form.actions.setErrors({
     formId: 'register',
-    errors: errors.reduce((memo, err) => ({
-      ...memo,
-      ...err,
-    }), {}),
+    errors: errors,
   }));
 };
 
 const saveUserToLocalStorage = function ({payload: {email}}) {
   localStorage.setItem('user', email || '');
+};
+
+const removeUserFromLocalStorage = function () {
+  localStorage.removeItem('user');
 };
