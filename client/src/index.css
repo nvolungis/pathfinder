@@ -50,6 +50,10 @@ body {
   font-size: 18px;
 }
 
+.form__entry__input--has-error {
+  border-color: red;
+}
+
 .form__entry__input:focus {
   outline: none;
 }
@@ -61,4 +65,9 @@ body {
 
 .form__entry__input--submit:hover {
   filter: brightness(1.1);
+}
+
+.form__entry__error {
+  color: red;
+  margin-top: 5px;
 }

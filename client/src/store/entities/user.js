@@ -1,5 +1,7 @@
-import request   from '../util/request';
-import * as form from './form';
+import request             from '../util/request';
+import * as form           from './form';
+import {push}              from 'react-router-redux';
+import { SubmissionError } from 'redux-form'
 
 import {
   createAction,
@@ -60,17 +62,31 @@ export const saga = function* () {
   ]);
 };
 
-const createUser = function* ({payload}) {
-  const hasErrors = e => {
-    return e.response && e.response.data && e.response.data.errors;
+const createUser = function* ({payload: {user, resolve, reject}}) {
+  const getErrors = e => {
+    if (e.response && e.response.data && e.response.data.errors) {
+      const errors = e.response.data.errors;
+
+      return Object.keys(errors).reduce((memo, err) => {
+        return {
+          ...memo,
+          [err]: errors[err].message,
+        }
+      }, {});
+    }
+
+    return false;
   };
 
   try {
-    const {data: {user: {email}}} = yield call(api.createUser, payload);
+    const {data: {user: {email}}} = yield call(api.createUser, user);
     yield put(actions.setUser({email}));
+    yield put(push('/'));
+    yield resolve();
   } catch (e) {
-    if(hasErrors(e)) {
-      return yield setFormErrors(e.response.data.errors);
+    const errors = getErrors(e);
+    if (errors) {
+      return reject(new SubmissionError(errors));
     }
     console.log(e);
   }

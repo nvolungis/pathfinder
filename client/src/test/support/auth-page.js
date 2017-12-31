@@ -17,6 +17,10 @@ export default class AuthPage extends Page {
     return this.wrapper.find('input[name="password"]');
   }
 
+  blurEmailField() {
+    this.email.simulate('blur');
+  }
+
   fillInEmailField(txt) {
     this.email.simulate('change', { target: { value: txt } });
   }
@@ -30,7 +34,7 @@ export default class AuthPage extends Page {
   }
 
   submit() {
-    const submit = this.wrapper.find('input[type="submit"]');
+    const submit = this.wrapper.find('button[type="submit"]');
     submit.simulate('submit');
   }
 }

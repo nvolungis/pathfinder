@@ -29,10 +29,8 @@ const AuthScreen = ({
         path={`${match.url}/register`}
         render={() => (
           <RegisterForm
-            form={registerForm}
-            user={user}
             onSubmit={onRegisterSubmit}
-            clearError={onFieldFocus}
+            user={user}
           />
         )}
       />
@@ -50,7 +48,9 @@ export default connect(
   },
   dispatch => ({
     onLogInSubmit    : data => dispatch(user.actions.createUser(data)),
-    onRegisterSubmit : data => dispatch(user.actions.createUser(data)),
+    onRegisterSubmit : data => new Promise((resolve, reject) => {
+      dispatch(user.actions.createUser({user: data, resolve, reject}));
+    }),
     onLogOutSubmit   : data => dispatch(user.actions.logOut()),
     onFieldFocus     : data => dispatch(form.actions.clearError(data)),
   })

@@ -24,14 +24,23 @@ describe('registration', () => {
     mockAxios.mockResponse({ status: 201, data: {user: {email}}});
     await page.allowRender();
 
-    expect(page.text).toContain(`Welcome ${email}`);
     expect(page.text).toContain(`Log Out ${email}`);
     expect(page.text).not.toContain('Sign Up')
     expect(page.text).not.toContain('Log In')
     expect(localStorage.getItem('user')).toEqual('test@email.com');
   });
 
-  it('shows validation errors', async () => {
+  it('shows client-side validation errors', () => {
+    const page  = new RegistrationPage({store});
+    const email = 'malformedEmail.com';
+
+    page.fillInEmailField(email);
+    page.blurEmailField();
+
+    expect(page.text).toContain('Invalid email address')
+  });
+
+  it('shows server-side validation errors', async () => {
     const page  = new RegistrationPage({store});
     const email = 'taken@email.com';
 
@@ -44,19 +53,6 @@ describe('registration', () => {
     await page.allowRender();
 
     expect(page.text).toContain(`This email is taken`);
-  });
-
-  it('clears errors on focus', async () => {
-    const errors       = {email: {message: 'This email is taken'}};
-    const initialState = {form: {register: {errors}}};
-    const page         = new RegistrationPage({store, initialState});
-
-    expect(page.text).toContain(`This email is taken`);
-
-    page.focusEmailField();
-    await page.allowRender();
-
-    expect(page.text).not.toContain('This email is taken');
   });
 
   it('on mount, it redirects to homepage if user is populated', () => {

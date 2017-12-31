@@ -1,5 +1,10 @@
 import { createLogger }     from 'redux-logger'
 import createSagaMiddleware from 'redux-saga'
+import history              from './history';
+
+import {
+  routerMiddleware as createRouterMiddleware
+} from 'react-router-redux'
 
 import {
   rootReducer,
@@ -11,14 +16,16 @@ import {
   createStore,
 } from 'redux';
 
-const isDev = process.env.NODE_ENV === 'development';
-const sagaMiddleware = createSagaMiddleware();
+const isDev            = process.env.NODE_ENV === 'development';
+const sagaMiddleware   = createSagaMiddleware();
+const routerMiddleware = createRouterMiddleware(history);
 
 const store = createStore(
   rootReducer,
   applyMiddleware(...[
     isDev ? createLogger() : undefined,
     sagaMiddleware,
+    routerMiddleware,
   ].filter(m => Boolean(m)))
 );
 

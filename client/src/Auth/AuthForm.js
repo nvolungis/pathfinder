@@ -4,17 +4,10 @@ import {Redirect}           from 'react-router-dom';
 import RenderField          from './RenderField';
 
 const RegisterForm = props => {
-  const { handleSubmit, submitting, user } = props
-
-  if (user && user.email) {
-    return (
-      <Redirect to="/" />
-    )
-  }
+  const { handleSubmit, submitting } = props
 
   return (
     <form className='form AuthScreen__form' onSubmit={handleSubmit}>
-      <h1 className='AuthScreen__heading'>Sign Up</h1>
       <Field name="email" type="email" component={RenderField} label="Email" />
       <Field name="password" type="password" component={RenderField} label="Password" />
       <div>

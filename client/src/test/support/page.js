@@ -1,23 +1,32 @@
-import React          from 'react';
-import {mount}        from 'enzyme';
-import {MemoryRouter} from 'react-router-dom';
-import {Provider}     from 'react-redux';
-import App            from '../../App';
+import React             from 'react';
+import {mount}           from 'enzyme';
+// import {MemoryRouter} from 'react-router-dom';
+import {ConnectedRouter} from 'react-router-redux'
+import {Provider}        from 'react-redux';
+import App               from '../../App';
+import history           from '../../store/history';
+import {push}            from 'react-router-redux';
+
+// <MemoryRouter initialEntries={[location]} initialIndex={0} >
+//   <App />
+// </MemoryRouter>
 
 export default class Page {
   constructor({ initialState, location='/', store }) {
-    if(initialState) {
+    if (initialState) {
       store.dispatch({
         type    : 'setState',
-        payload : initialState
+        payload : initialState,
       });
     }
 
+    store.dispatch(push(location));
+
     this.wrapper = mount(
       <Provider store={store}>
-        <MemoryRouter initialEntries={[location]} initialIndex={0} >
+        <ConnectedRouter history={history}>
           <App />
-        </MemoryRouter>
+        </ConnectedRouter>
       </Provider>
     );
   }

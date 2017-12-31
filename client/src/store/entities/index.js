@@ -1,12 +1,15 @@
-import { combineReducers } from 'redux';
-import {all}               from 'redux-saga/effects';
-import deepmerge           from 'deepmerge';
-import * as form           from './form';
-import * as user           from './user';
+import { combineReducers }      from 'redux';
+import {all}                    from 'redux-saga/effects';
+import deepmerge                from 'deepmerge';
+import * as form                from './form';
+import * as user                from './user';
+import {reducer as formReducer} from 'redux-form';
+import {routerReducer}          from 'react-router-redux'
 
 const combinedReducer = combineReducers({
-  form : form.reducer,
-  user : user.reducer,
+  form   : formReducer,
+  router : routerReducer,
+  user   : user.reducer,
 });
 
 export const rootReducer = (state, action) => {
