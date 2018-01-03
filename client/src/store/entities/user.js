@@ -23,6 +23,7 @@ export const actions = {
   createUser : createAction('create user'),
   setUser    : createAction('set user'),
   logOut     : createAction('log out'),
+  logIn      : createAction('log in'),
 };
 
 /*
@@ -53,38 +54,35 @@ export const reducer = handleActions({
  * SAGAS
  */
 
-
 export const saga = function* () {
   yield all([
     takeEvery(actions.createUser.toString(), createUser),
     takeEvery(actions.setUser.toString(), saveUserToLocalStorage),
     takeEvery(actions.logOut.toString(), removeUserFromLocalStorage),
+    takeEvery(actions.logIn.toString(), logIn),
   ]);
 };
 
 const createUser = function* ({payload: {user, resolve, reject}}) {
   const getErrors = e => {
-    if (e.response && e.response.data && e.response.data.errors) {
+    if (e.response.data && e.response.data.errors) {
       const errors = e.response.data.errors;
 
-      return Object.keys(errors).reduce((memo, err) => {
-        return {
-          ...memo,
-          [err]: errors[err].message,
-        }
-      }, {});
+      return Object.keys(errors).reduce((memo, err) => ({
+        ...memo,
+        [err]: errors[err].message,
+      }), {});
     }
-
-    return false;
   };
 
   try {
     const {data: {user: {email}}} = yield call(api.createUser, user);
     yield put(actions.setUser({email}));
     yield put(push('/'));
-    yield resolve();
+    resolve();
   } catch (e) {
     const errors = getErrors(e);
+    console.log('errors', errors)
     if (errors) {
       return reject(new SubmissionError(errors));
     }
@@ -92,8 +90,30 @@ const createUser = function* ({payload: {user, resolve, reject}}) {
   }
 };
 
+const logIn = function* ({payload: {user, resolve, reject}}) {
+  const getError = e => {
+    if (e.response.data && e.response.data.error) {
+      return {_error: e.response.data.error};
+    }
+  };
+
+  try {
+    const {data: {user: {email}}} = yield call(api.logIn, user);
+    yield put(actions.setUser({email}));
+    yield put(push('/'));
+    resolve();
+  } catch (e) {
+    const error = getError(e);
+    if (error) {
+      return reject(new SubmissionError(error));
+    }
+    console.log(e);
+  }
+};
+
 const api = {
-  createUser: (attrs) => request('post', 'user', attrs)
+  createUser: (attrs) => request('post', 'user', attrs),
+  logIn: (attrs) => request('post', 'login', attrs),
 };
 
 const setFormErrors = function* (errors) {

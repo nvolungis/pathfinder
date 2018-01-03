@@ -1,10 +1,10 @@
 import Page from './Page';
 
 export default class AuthPage extends Page {
-  constructor({initialState, store}) {
+  constructor({initialState, location, store}) {
     super({
       initialState : initialState,
-      location     : '/auth/register',
+      location     : '/auth/log-in',
       store        : store,
     });
   }

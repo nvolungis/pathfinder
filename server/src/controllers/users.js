@@ -10,7 +10,8 @@ exports.login = function(req, res, next) {
 
     if(err) return next(err)
     if(!user) {
-      return res.json({ success: false, message: info.message })      
+      res.status(401)
+      return res.json({error: info.message });
     }
     // ***********************************************************************
     // "Note that when using a custom callback, it becomes the application's
@@ -22,9 +23,10 @@ exports.login = function(req, res, next) {
     // that can be used to establish a login session    
     req.logIn(user, loginErr => {
       if(loginErr) {
-        return res.json({ success: false, message: loginErr })
+        res.status(401);
+        return res.json({ error: loginErr })
       }
-      return res.json({ success: true, message: "authentication succeeded" })
+      return res.json({ user });
     })
   })(req, res, next)
 }

@@ -14,8 +14,9 @@ const combinedReducer = combineReducers({
 
 export const rootReducer = (state, action) => {
   const initialState = {
-    form: form.initialState,
     user: user.initialState,
+    form: formReducer(undefined, {}),
+    router: routerReducer(undefined, {}),
   };
 
   if(action.type === 'reset') {

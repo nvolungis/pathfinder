@@ -5,11 +5,7 @@ const create = () => ({
   get  : async (...args) => mockAxios.get(...args),
 });
 
-const interceptors = {
-  response: {
-    use: () => null
-  }
-};
+const interceptors = { response: { use: () => null } };
 
 export default {
   create,

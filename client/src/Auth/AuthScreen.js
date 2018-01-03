@@ -18,8 +18,14 @@ const AuthScreen = ({
   <section className='AuthScreen'>
     <Switch>
       <Route
+        exact
         path={`${match.url}/log-in`}
-        render={() => <LogInForm onSubmit={onLogInSubmit} />}
+        render={() => (
+          <LogInForm
+            onSubmit={onLogInSubmit}
+            user={user}
+          />
+        )}
       />
       <Route
         path={`${match.url}/log-out`}
@@ -47,7 +53,9 @@ export default connect(
     }
   },
   dispatch => ({
-    onLogInSubmit    : data => dispatch(user.actions.createUser(data)),
+    onLogInSubmit    : data => new Promise((resolve, reject) => {
+      dispatch(user.actions.logIn({user: data, resolve, reject}));
+    }),
     onRegisterSubmit : data => new Promise((resolve, reject) => {
       dispatch(user.actions.createUser({user: data, resolve, reject}));
     }),
@@ -55,4 +63,5 @@ export default connect(
     onFieldFocus     : data => dispatch(form.actions.clearError(data)),
   })
 )(AuthScreen);
+
 

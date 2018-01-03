@@ -5,9 +5,9 @@ import AuthPage  from './support/auth-page';
 
 describe('session', () => {
   afterEach(() => {
-    localStorage.clear();
     mockAxios.reset();
     store.dispatch({type: 'reset'});
+    localStorage.clear();
   });
 
   describe('log out', () => {
@@ -26,19 +26,22 @@ describe('session', () => {
     });
   });
 
-  // describe('log in', () => {
-  //   it('lets users log in', async () => {
-  //     const page = new AuthPage({store, location: '/auth/log-in'});
-  //     const email = 'test@email.com';
+  describe('log in', () => {
+    it('lets users log in', async () => {
+      const page = new AuthPage({store, location: '/auth/log-in'});
+      const email = 'test@email.com';
 
-  //     page.fillInEmailField(email);
-  //     page.fillInPasswordField('abc123');
-  //     page.submit();
+      expect(page.text).toContain('Email')
 
-  //     mockAxios.mockResponse({ status: 200, data: {user: {email}}});
-  //     await page.allowRender();
+      page.fillInEmailField(email);
+      page.fillInPasswordField('abc123');
+      page.submit();
 
-  //     expect(page.text).toContain(`Log Out ${email}`);
-  //   });
-  // });
+      mockAxios.mockResponse({ status: 201, data: {user: {email}}});
+
+      await page.allowRender();
+
+      expect(page.text).toContain(`Log Out ${email}`);
+    });
+  });
 });
